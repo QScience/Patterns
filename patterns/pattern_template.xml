@@ -8,7 +8,7 @@
     <version>0.1</version>
     <author_date>09.11.2008</author_date>
     <category>Template</category>
-    <compatibility>5x</compatibility>      
+    <core>5.x</core>      
   </info>
   
   <!-- Make sure to put lots of nice comments here in your pattern -->
@@ -340,11 +340,9 @@
     <!-- Setup Permissions -->
     
     <permissions role="role1">
-	    <p>permission 1</p>
-	    <p>permission 2</p>
-	    <p>permission 3</p>
+	    <value>permission 1</value>
+	    <value>permission 2</value>
     </permissions>
-    
     
     <!-- Setup Theme -->
     

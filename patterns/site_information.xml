@@ -7,7 +7,7 @@
     <author_email>chris@graviteklabs.com></author_email>
     <version>0.1</version>
     <author_date>09.11.2008</author_date>
-    <compatibility>5x</compatibility>      
+    <core>5.x</core>      
   </info>
   <actions>
     
