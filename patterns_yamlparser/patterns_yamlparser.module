@@ -2,7 +2,12 @@
 
 define('PATTERNS_FORMAT_YAML', 'yaml');
 
-// Implements hook patterns_parser
+/**
+ * 
+ * Implements hook_patterns_parser().
+ * 
+ * @return array  Parser definition.
+ */
 function patterns_yamlparser_patterns_parser() {
   $parser = array();
   $parser['format'] = PATTERNS_FORMAT_YAML;
@@ -12,7 +17,28 @@ function patterns_yamlparser_patterns_parser() {
 
 
 /**
- * Loads and parases a YAML pattern from file.
+ * Implements hook_libraries_info().
+ * 
+ * @note : Libraries 2.x
+ */
+function patterns_yamlparser_libraries_info() {
+  $libraries['spyc'] = array(
+      'name' => 'Spyc (A simple YAML loader/dumper class for PHP)',
+      'vendor url' => 'https://code.google.com/p/spyc/',
+      'download url' => 'https://code.google.com/p/spyc/downloads/list',
+      'version arguments' => array(
+          'file' => 'spyc.php',
+          'pattern' => '@version\s+([0-9a-zA-Z\.-]+)@',
+      ),
+      'files' => array(
+          'php' => array('spyc.php'),
+      ),
+  );
+  return $libraries;
+}
+
+/**
+ * Loads and parses a YAML pattern from file.
  *
  * @param string $path The path to the pattern file.
  * @param bool $local (optional) TRUE if the pattern
