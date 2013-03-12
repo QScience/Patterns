@@ -14,7 +14,9 @@ function patterns_yamlparser_requirements($phase) {
   $requirements = array();
 
   if ($phase == 'runtime') {
-    if (($library = libraries_load('spyc')) && empty($library['loaded'])) {
+    //Trying to detect Spyc library
+    $library = libraries_detect('spyc');
+    if (empty($library['installed'])) {
       $requirements['spyc'] = array(
         'title'       => t('Spyc library (YAML parser)'),
         'description' => t('Patterns module requires Spyc library to work with YAML patterns. To enable YAML support, download the !spyc package to obtain spyc.php. Create a directory for the library (e.g. sites/all/libraries/spyc/) and place spyc.php there.',
@@ -26,7 +28,7 @@ function patterns_yamlparser_requirements($phase) {
       $requirements['spyc'] = array(
         'title'       => t('Spyc library (YAML parser)'),
         'severity'    => REQUIREMENT_OK,
-        'value'       => patterns_utils_get_phpdoc_version($path),
+        'value'       => $library['version'],
       );
     }
   }

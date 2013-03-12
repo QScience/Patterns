@@ -25,7 +25,7 @@ function patterns_yamlparser_libraries_info() {
       'vendor url' => 'https://code.google.com/p/spyc/',
       'download url' => 'https://github.com/mustangostang/spyc/',
       'version arguments' => array(
-          'file' => 'spyc.php',
+          'file' => 'Spyc.php',
           'pattern' => '@version\s+([0-9a-zA-Z\.-]+)@',
       ),
       'files' => array(
@@ -48,8 +48,9 @@ function patterns_yamlparser_load($path, $local = TRUE) {
   if ($local && !file_exists($path)) {
     return FALSE;
   }
-
-  if ($library = libraries_load('spyc') && !empty($library['loaded'])) {
+  
+  $library = libraries_load('spyc');
+  if (!empty($library['loaded'])) {
     return Spyc::YAMLLoad($path);
   }else{
       watchdog('Patterns', 'Spyc library not found while trying to load the file.', array(), WATCHDOG_ERROR);
@@ -66,8 +67,11 @@ function patterns_yamlparser_load($path, $local = TRUE) {
  *
  */
 function patterns_yamlparser_parse($pattern) {
-  if (!is_array($pattern) && $library = libraries_load('spyc') && !empty($library['loaded'])) {
-    $pattern = Spyc::YAMLLoad($pattern);
+  $library = libraries_load('spyc');
+  if (!empty($library['loaded'])) {
+    if (!is_array($pattern)) {
+      $pattern = Spyc::YAMLLoad($pattern);
+    }
   }else{
       watchdog('Patterns', 'Spyc library not found while trying to parse.', array(), WATCHDOG_ERROR);
       return FALSE;
@@ -87,8 +91,8 @@ function patterns_yamlparser_parse($pattern) {
 function patterns_yamlparser_dump($pattern = NULL, $append = NULL) {
   if (is_null($pattern) || !is_array($pattern)) return FALSE;
   $dump = (empty($append)) ? '' : $append . "\n";
-  if ($library = libraries_load('spyc') && !empty($library['loaded'])) {
-    require_once libraries_get_path('spyc') . '/spyc.php';
+  $library = libraries_load('spyc');
+  if (!empty($library['loaded'])) {
     $dump.= Spyc::YAMLDump($pattern);
     return $dump;
   }else{
