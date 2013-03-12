@@ -200,6 +200,24 @@ function patterns_requirements($phase) {
           'value'       => t('Disabled'),
         );
       }
+      
+      //Trying to detect CodeMirror library
+      $library = libraries_detect('codemirror');
+      if (empty($library['installed'])) {
+        $requirements['codemirror'] = array(
+            'title'       => t('CodeMirror (JavaScript based code editor)'),
+            'description' => t('Patterns editor can be better visualized with CodeMirror. To enable CodeMirror support, download the !codemirror and copy it in the libraries folder (e.g. sites/all/libraries/codemirror/).',
+                array('!codermirror' => l(t('codemirror'), 'https://github.com/marijnh/CodeMirror/', array('absolute' => TRUE)))),
+            'severity'    => REQUIREMENT_INFO,
+            'value'       => t('Missing'),
+        );
+      }else{
+        $requirements['codemirror'] = array(
+            'title'       => t('CodeMirror (JavaScript based code editor)'),
+            'severity'    => REQUIREMENT_OK,
+            'value'       => $library['version'],
+        );
+      }
 
     break;
   }
