@@ -348,6 +348,43 @@ function patterns_menu() {
   return $items;
 }
 
+/**
+ * Implements hook_libraries_info().
+ * 
+ * Requires Codemirror >= 3.01 (new path for addons).
+ */
+function patterns_libraries_info() {
+  $libraries = array();
+  $libraries['codemirror'] = array(
+      'name' => 'CodeMirror',
+      'vendor url' => 'http://codemirror.net/',
+      'download url' => 'https://github.com/marijnh/CodeMirror/',
+      'files' => array(
+          'js' => array(
+              'lib/codemirror.js',
+          ),
+          'css' => array(
+              'lib/codemirror.css',
+          ),
+          'css' => array(
+              'theme/default.css',
+          ),
+          'js' => array(
+              'addon/search/search.js',
+          ),
+          'js' => array(
+              'addon/search/searchcursor.js',
+          ),
+          'js' => array(
+              'addon/dialog/dialog.js',
+          ),
+          'css' => array(
+              'addon/dialog/dialog.css',
+          ),
+      ),
+  );
+  return $libraries;
+}
 
 /**
  * First function to be called for displaying the pattern list page.
