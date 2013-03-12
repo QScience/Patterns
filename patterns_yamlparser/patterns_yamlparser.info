@@ -1,7 +1,7 @@
 name = YAML Parser
 description = YAML Parser for Patterns files. Requires Spyc library to be installed separately.
 dependencies[] = patterns
-dependencies[] = libraries
+dependencies[] = libraries (>=7.x-2.x)
 
 core = 7.x
 version = 7.x-1.x-dev
