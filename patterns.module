@@ -356,29 +356,27 @@ function patterns_menu() {
 function patterns_libraries_info() {
   $libraries = array();
   $libraries['codemirror'] = array(
-      'name' => 'CodeMirror',
+      'name' => 'codemirror',
       'vendor url' => 'http://codemirror.net/',
       'download url' => 'https://github.com/marijnh/CodeMirror/',
+      /*'version arguments' => array(
+          'file' => 'package.json',
+          'pattern' => '@version\s+([0-9a-zA-Z\.-]+)@',
+      ),*/
+      'version' => '3.10.01',
       'files' => array(
           'js' => array(
               'lib/codemirror.js',
+              'addon/search/search.js',
+              'addon/search/searchcursor.js',
+              'addon/dialog/dialog.js',
+              'mode/yaml/yaml.js',
+              'mode/xml/xml.js',
+              'mode/php/php.js',
           ),
           'css' => array(
               'lib/codemirror.css',
-          ),
-          'css' => array(
               'theme/default.css',
-          ),
-          'js' => array(
-              'addon/search/search.js',
-          ),
-          'js' => array(
-              'addon/search/searchcursor.js',
-          ),
-          'js' => array(
-              'addon/dialog/dialog.js',
-          ),
-          'css' => array(
               'addon/dialog/dialog.css',
           ),
       ),

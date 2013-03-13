@@ -297,10 +297,12 @@ function patterns_load_codemirror($format = PATTERNS_FORMAT_YAML) {
     // TODO: enable PHP mode for codemirror as well.
     // At the moment it does not work
     // Check if we need to set up the format here
-    //if ($format !== PATTERNS_FORMAT_UNKNOWN && $format !== 'php') {
-    //  $cm_mode = $cm_path . '/mode/' . $format . '/' . $format . '.js';
-    //  drupal_add_js($cm_mode);
-    //}
+    /*if ($format !== PATTERNS_FORMAT_UNKNOWN && $format !== 'php') {
+      $cm_mode = 'mode/' . $format . '/' . $format . '.js';
+      $library_files = $library['files'];
+      //drupal_add_js($cm_mode);
+      $library['files']['js'][$cm_mode]= array();
+    }*/
 
     // Adding Pattern Customization for Co2
     drupal_add_css(drupal_get_path('module', 'patterns') . '/css/editor.css');

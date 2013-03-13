@@ -191,7 +191,6 @@ function patterns_requirements($phase) {
 
   switch ($phase) {
     case 'runtime':
-
       if (!ini_get('allow_url_fopen')) {
         $requirements['allow_url_fopen'] = array(
           'title'       => t('Patterns import files from remote URL'),
@@ -206,10 +205,10 @@ function patterns_requirements($phase) {
       if (empty($library['installed'])) {
         $requirements['codemirror'] = array(
             'title'       => t('CodeMirror (JavaScript based code editor)'),
-            'description' => t('Patterns editor can be better visualized with CodeMirror. To enable CodeMirror support, download the !codemirror and copy it in the libraries folder (e.g. sites/all/libraries/codemirror/).',
-                array('!codermirror' => l(t('codemirror'), 'https://github.com/marijnh/CodeMirror/', array('absolute' => TRUE)))),
-            'severity'    => REQUIREMENT_INFO,
-            'value'       => t('Missing'),
+            'description' => t('Patterns editor can be better visualized with CodeMirror. To enable CodeMirror support, download the !codemirror and copy it into the libraries folder (e.g. sites/all/libraries/codemirror/). Error: !error',
+                array('!codemirror' => l(t('library'), 'https://github.com/marijnh/CodeMirror/', array('absolute' => TRUE)), '!error' => $library['error message'])),
+            'severity'    => REQUIREMENT_WARNING,
+            'value'       => t($library['error']),
         );
       }else{
         $requirements['codemirror'] = array(
