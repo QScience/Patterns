@@ -370,6 +370,7 @@ function patterns_libraries_info() {
               'addon/search/search.js',
               'addon/search/searchcursor.js',
               'addon/dialog/dialog.js',
+              'addon/mode/loadmode.js',
               'mode/yaml/yaml.js',
               'mode/xml/xml.js',
               'mode/php/php.js',

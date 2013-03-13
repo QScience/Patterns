@@ -30,18 +30,10 @@ window.onload = function() {
 		    	}
 		    }); 
 		    
-		    // NOT WORKING
-//			if ('undefined' !== typeof format_selector) {
-//			    //console.log(CodeMirror.listModes());
-//				CodeMirror.modeURL = "../mode/%N/%N.js";
-//				
-//				format_selector.onchange = function() {
-//		    		if (format_selector.value && format_selector.value !== 'unknown') {
-//		    			editor.setOption("mode", format_selector.value);
-//						CodeMirror.autoLoadMode(editor, format_selector.value);
-//		    		}
-//		    	}
-//			}
+		    //Set the format to be employed by the editor code for this Pattern
+			if (typeof format_selector !== 'undefined') {
+				editor.setOption('mode', format_selector.value);
+			}
 		    
 		    
 		    var fullScreenNotice = 'When cursor is in the editor: F11/ESC toggle full screen editing. Ctrl-F search in the pattern';
