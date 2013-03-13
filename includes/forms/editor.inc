@@ -56,8 +56,8 @@ function patterns_editor($form_id, $pattern = array()) {
 
   $editor  = drupal_render($form);
   if (!patterns_load_codemirror($form['format']['#default_value'])) {
-    $cm = l(t('Codemirror 3.0'), 'http://codemirror.net/');
-    $editor .= t('Install !cm in sites/all/libraries/codemirror-3.0 for a better editor experience.', array('!cm' => $cm));
+    $cm = l(t('Codemirror 3'), 'http://codemirror.net/');
+    $editor .= t('Install !cm in sites/all/libraries/codemirror for a better editor experience.', array('!cm' => $cm));
   }
 
   // Load the JS of for the ajax validation.
@@ -269,45 +269,11 @@ function patterns_edit_submit($form, &$form_state) {
  */
 function patterns_load_codemirror($format = PATTERNS_FORMAT_YAML) {
   // Load the CodeMirror Editor if installed in the libraries folder
-  //$cm_path = libraries_get_path('codemirror-3.0');
   $library = libraries_load('codemirror');
   if (!empty($library['loaded'])) {
-//  if (!empty($cm_path) && file_exists($cm_path)) {
-//     $cm_js = $cm_path . '/lib/codemirror.js';
-//     $cm_css = $cm_path . '/lib/codemirror.css';
-//     $cm_css_theme = $cm_path . '/theme/default.css';
-    
-//     // search
-//     $cm_search = $cm_path . '/lib/util/search.js';
-//     $cm_searchcursor = $cm_path . '/lib/util/searchcursor.js';
-//     $cm_dialog = $cm_path . '/lib/util/dialog.js';
-//     $cm_dialog_css = $cm_path . '/lib/util/dialog.css';
-    
-
-//     drupal_add_css($cm_css);
-//     drupal_add_css($cm_css_theme);
-//     drupal_add_js($cm_js);
-    
-    
-//     drupal_add_css($cm_dialog_css);
-//     drupal_add_js($cm_search);
-//     drupal_add_js($cm_searchcursor);
-//     drupal_add_js($cm_dialog);
-
-    // TODO: enable PHP mode for codemirror as well.
-    // At the moment it does not work
-    // Check if we need to set up the format here
-    /*if ($format !== PATTERNS_FORMAT_UNKNOWN && $format !== 'php') {
-      $cm_mode = 'mode/' . $format . '/' . $format . '.js';
-      $library_files = $library['files'];
-      //drupal_add_js($cm_mode);
-      $library['files']['js'][$cm_mode]= array();
-    }*/
-
     // Adding Pattern Customization for Co2
     drupal_add_css(drupal_get_path('module', 'patterns') . '/css/editor.css');
     drupal_add_js(drupal_get_path('module', 'patterns') . '/js/editor.js');
-
     return TRUE;
   }
   return FALSE;
