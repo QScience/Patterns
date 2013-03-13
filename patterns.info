@@ -1,7 +1,7 @@
 name = Patterns
 description = Magically import and export web site configuration, and content to files.
 dependencies[] = token
-dependencies[] = libraries
+dependencies[] = libraries (>=7.x-2.x)
 
 core = 7.x
 version = 7.x-1.x-dev
