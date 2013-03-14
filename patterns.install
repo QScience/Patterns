@@ -212,7 +212,7 @@ function patterns_requirements($phase) {
         );
       }else{
         $requirements['codemirror'] = array(
-            'title'       => t('CodeMirror (JavaScript based code editor)'),
+            'title'       => t('CodeMirror Library (JavaScript based code editor)'),
             'severity'    => REQUIREMENT_OK,
             'value'       => $library['version'],
         );

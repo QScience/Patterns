@@ -359,11 +359,11 @@ function patterns_libraries_info() {
       'name' => 'codemirror',
       'vendor url' => 'http://codemirror.net/',
       'download url' => 'https://github.com/marijnh/CodeMirror/',
+      //"version":"3.10.01"
       'version arguments' => array(
-          'file' => 'package.json',
-          'pattern' => '/"version/":/"([0-9a-zA-Z\.-]+)/"',
+       'file' => 'package.json',
+          'pattern' => '@"version":"([0-9a-zA-Z\.-]+)"@',
       ),
-      //'version' => '3.10.01',
       'files' => array(
           'js' => array(
               'lib/codemirror.js',
