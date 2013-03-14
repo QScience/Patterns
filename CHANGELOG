@@ -1,3 +1,11 @@
+7200
+
+		- Changes to allow compatibility with Libraries 7.x-2.x
+		- Improved compatiblity with Codemirror editor and some other minor fixes
+		- Required Codemirror version >= 3.0.1, should be placed at sites/[all]/codemirror
+		- Required Spyc version >= 0.5.1
+
+
 7200-rc1
 
 		- Syntactic and semantic validation
