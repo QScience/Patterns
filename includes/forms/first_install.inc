@@ -60,33 +60,37 @@ function patterns_first_install($form, &$form_state) {
     );
   }
   
-  $path = libraries_get_path('spyc') . '/spyc.php';
-
-  // Valid in installation and run-time
-
-  if (!file_exists($path)) {
+  //Checking if Spyc is installed
+  if (($library = libraries_load('spyc')) && !empty($library['loaded'])) {
     $form['welcome']['spyc'] = array(
-      '#prefix' => '<br/><strong>' . t('Warning:') . ' </strong>',
-      '#markup' => t('Spyc library for parsing YAML files not found. Please download the !spyc package and copy spyc.php into your libraries folder (e.g. sites/all/libraries/spyc/).',
-                          array('!spyc' => l(t('spyc'), 'http://code.google.com/p/spyc/'))),
+        '#prefix' => '<br/><strong>' . t('Spyc:') . ' </strong>',
+        '#markup' => t('Spyc library (version %version) successfully installed', array ('%version' => $library['version'])),
     );
   }
-  
-  
-  $cm_path = libraries_get_path('codemirror-3.0');
-  if (empty($cm_path) || !file_exists($cm_path)) {
-  	$form['welcome']['cm'] = array(
-      '#prefix' => '<br/><strong>' . t('Warning:') . ' </strong>',
-      '#markup' => t('Codemirror 3.0 not found. Download !codemirror and copy it into your libraries folder (e.g. sites/all/libraries/codemirror-3.0/) to a have a better editor experience.',
-                          array('!codemirror' => l(t('codemirror 3.0'), 'http://codemirror.net/'))),
-  	);	
+  else {
+    //Display error message if there were some problems
+    $form['welcome']['spyc'] = array(
+        '#prefix' => '<br/><strong>' . t('Warning:') . ' </strong>',
+        '#markup' => t('Patterns module requires Spyc library to work with YAML patterns. To enable YAML support, download the !spyc library and place it in your libraries directory (e.g. sites/all/libraries/spyc/).',
+                            array('!spyc' => l(t('spyc'), 'https://github.com/mustangostang/spyc/', array('absolute' => TRUE)))),
+    );
   }
-   
 
-
-  
-
-  
+  //Checking if Codemirror is installed
+  if (($library = libraries_load('codemirror')) && !empty($library['loaded'])) {
+    $form['welcome']['codemirror'] = array(
+        '#prefix' => '<br/><strong>' . t('Codemirror:') . ' </strong>',
+        '#markup' => t('Codemirror library (version %version) successfully installed', array ('%version' => $library['version'])),
+    );
+  }
+  else {
+    //Display error message if there were some problems
+    $form['welcome']['codemirror'] = array(
+        '#prefix' => '<br/><strong>' . t('Warning:') . ' </strong>',
+        '#markup' => t('Patterns editor can be better visualized with CodeMirror. To enable CodeMirror support, download the !codemirror and copy it into the libraries folder (e.g. sites/all/libraries/codemirror/).',
+                array('!codemirror' => l(t('library'), 'https://github.com/marijnh/CodeMirror/', array('absolute' => TRUE)))),
+    );
+  }  
 
   return $form;
 }
