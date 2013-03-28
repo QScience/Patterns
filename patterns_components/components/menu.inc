@@ -4,7 +4,7 @@
  * Patterns component for the menu system.
  */
 
-function menu_patterns($data) {
+function menu_patterns() {
   $files = array('modules/menu/menu.admin.inc');
 
   $actions['menu'] = array(
