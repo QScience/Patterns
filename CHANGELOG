@@ -4,6 +4,7 @@
 		- Improved compatiblity with Codemirror editor and some other minor fixes
 		- Required Codemirror version >= 3.0.1, should be placed at sites/[all]/codemirror
 		- Required Spyc version >= 0.5.1
+		- Issue #1955410 by pobster: Missing argument 1 for menu_patterns()
 
 
 7200-rc1
