@@ -4,8 +4,7 @@ dependencies[] = token
 dependencies[] = libraries (>=7.x-2.x)
 
 core = 7.x
-version = 7.x-1.x-dev
-build = 7100-rc1
+version = 7.x-2.x-dev
 package = Patterns
 php = 5.2
 
