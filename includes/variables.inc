@@ -39,7 +39,7 @@ define('PATTERNS_DELETE', 'delete');
 define('PATTERNS_INCLUDE', 'include');
 
 define('PATTERNS_EXPORT', 'export');
-define('PATTERNS_EXPORT_ALL', 'all');
+define('PATTERNS_EXPORT_ALL', 'All');
 define('PATTERNS_EXPORT_CURRENT_THEMES', 'current_theme(s)'); //Export settings related to current theme(s)
 define('PATTERNS_EXTRACT_ALL', 'extract_all');
 
