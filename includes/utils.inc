@@ -224,6 +224,7 @@ function patterns_utils_is_public_page() {
  * 	Associative array of boolean values for each key
  * 
  * @see array_key_exists
+ * @see patterns_utils_check_keys
  */
 function patterns_utils_key_exists($key = NULL, $array = array()) {
 	$out = array();
@@ -240,6 +241,151 @@ function patterns_utils_key_exists($key = NULL, $array = array()) {
 		$out[$k] = array_key_exists($k, $array);
 	}
 	return $out;
+}
+
+/**
+ * Powerful tool to validate component input parameters
+ * 
+ * User can add sets of conditions, that will be evaluated together.
+ * A detailed error message is created with all failing conditions.
+ * 
+ * Supported conditions: 'mandatory', 'at_least_one', 'one_and_only_one', 
+ * 'exclusive'. 
+ *
+ * Conditions must be inserted as a new element of the checkings array,
+ * in the form: array('type' => params). E.g.
+ *
+ * $kchecks = array();
+ * $kchecks[] = array('mandatory', array('key1', 'key2', 'key3');
+ * $kchecks[] = array('at_least_one', array('key4', 'key5', 'key6');
+ * 
+ * @param array $data The array to validate
+ * @param array $kchecks The array of conditions  
+ *
+ * @see patterns_utils_key_exists
+ */
+function patterns_utils_check_keys($data, $kchecks = array(), &$msg, $BR = '<br/>') {
+
+  $msg_mandatory = NULL;
+  $msg_init_mandatory = t("The following mandatory keys are missing: ");
+
+  $msg_exclusive = NULL;
+  $msg_init_exclusive = t("The following keys are mutually exclusive: ");
+  $count_exclusive = NULL;
+
+  $msg_at_least_one = NULL;
+  $msg_init_at_least_one = t("At least one key of the following key must be present: ");
+  $found_at_least_one = NULL;
+
+  $msg_one_and_only_one = NULL;
+  $msg_init_one_and_only_one = t("Exactly one item of each group must be present. Zero, or more than one found: ");
+  $count_one_and_only_one = NULL;
+
+  $status = PATTERNS_SUCCESS;
+
+  foreach($kchecks as $check) {
+    $type = key($check);
+    $set = current($check);
+     
+    if ($type == 'exclusive') {
+       
+      $found_exclusive = 0;
+      foreach ($set as $k) {
+        if (isset($data[$k])) {
+          $found_exclusive++;
+          if ($found_exclusive > 1) {
+            break;
+          }
+        }
+      }
+      if ($found_exclusive > 1) {
+        $group_exclusive = '(' . implode(', ', $set) . ')';
+        if (is_null($msg_exclusive)) {
+          $msg_exclusive = $msg_init_exclusive . $group_exclusive;
+          $status = PATTERNS_ERR;
+        }
+        else {
+          $msg_exclusive .= ', ' . $group_exclusive;
+        }
+      }
+    }
+
+
+    if ($type == 'at_least_one') {
+       
+      $found_at_least_one = FALSE;
+      foreach ($set as $k) {
+        if (isset($data[$k])) {
+          $found_at_least_one = TRUE;
+          break;
+        }
+      }
+      if (!$found_at_least_one) {
+        $group_at_least_one = '(' . implode(', ', $set) . ')';
+
+        if (is_null($msg_at_least_one)) {
+          $msg_at_least_one = $msg_init_at_least_one . $group_at_least_one;
+          $status = PATTERNS_ERR;
+        }
+        else {
+          $msg_at_least_one .= ', ' . $group_at_least_one;
+        }
+      }
+    }
+
+
+    if ($type == 'one_and_only_one') {
+       
+      $count_one_and_only_one = 0;
+      foreach ($set as $k) {
+        if (isset($data[$k])) {
+          $count_one_and_only_one++;
+          if ($count_one_and_only_one > 1) {
+            break;
+          }
+           
+        }
+      }
+      if ($count_one_and_only_one != 1) {
+        $group_one_and_only_one = '(' . implode(', ', $set) . ')';
+
+        if (is_null($msg_at_least_one)) {
+          $msg_one_and_only_one = $msg_init_one_and_only_one . $group_one_and_only_one;
+          $status = PATTERNS_ERR;
+        }
+        else {
+          $msg_one_and_only_one .= ', ' . $group_one_and_only_one;
+        }
+      }
+    }
+
+
+    if ($type == 'mandatory') {
+
+      foreach ($set as $k) {
+        if (!isset($data[$k])) {
+          if (is_null($msg_mandatory)) {
+            $msg_mandatory = $msg_init_mandatory . $k;
+            $status = PATTERNS_ERR;
+          }
+          else {
+            $msg_mandatory .= ', ' . $k;
+          }
+        }
+      }
+    }
+     
+  } // end kcheck
+
+  // update error msg
+  if ($status == PATTERNS_ERR) {
+    $msg = is_null($msg_mandatory) ? $msg : $msg_mandatory;
+    $msg = is_null($msg_one_and_only_one) ? $msg : $msg . (is_null($msg) ? $msg_one_and_only_one : $BR . $msg_one_and_only_one);
+    $msg = is_null($msg_at_least_one) ? $msg : $msg . (is_null($msg) ? $msg_at_least_one : $BR . $msg_at_least_one);
+    $msg = is_null($msg_exclusive) ? $msg : $msg . (is_null($msg) ? $msg_exclusive : $BR . $msg_exclusive);
+  }
+
+  return $status;
 }
 
 /**
