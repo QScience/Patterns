@@ -87,6 +87,10 @@ define('PATTERNS_WARNING_REMAINING_DEPENDENCY', -4); //This refers to the proble
 define('PATTERNS_WARNING_NOT_UNIQUE_ALIAS', -5); //This refers to the problem of modifying or delete an element that there are more than one meeting the requirement existing on the system (not unique).
 define('PATTERNS_WARNING_INCONSISTENT_OPERATION', -6); //This refers to the problem of trying to apply an action to an element not supported by Drupal core
 
+// Type checking semantic warnings
+define('PATTERNS_WARNING_TYPE_ERROR', -7); // This refers to an element being of an unexpected type (e.g. string rather than int)
+define('PATTERNS_WARNING_OUT_OF_RANGE_ELEMENT', -8); // This refers to an element of the expected type, but out of range (e.g. 100, but max is 10)
+define('PATTERNS_WARNING_EMPTY_ELEMENT', -9); // This refers to the value of the key being empty, when that is not allowed
 
 define('PATTERNS_ALLOW_PUBLISH_DEFAULT', TRUE);
 
