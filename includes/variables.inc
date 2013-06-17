@@ -91,6 +91,8 @@ define('PATTERNS_WARNING_INCONSISTENT_OPERATION', -6); //This refers to the prob
 define('PATTERNS_WARNING_TYPE_ERROR', -7); // This refers to an element being of an unexpected type (e.g. string rather than int)
 define('PATTERNS_WARNING_OUT_OF_RANGE_ELEMENT', -8); // This refers to an element of the expected type, but out of range (e.g. 100, but max is 10)
 define('PATTERNS_WARNING_EMPTY_ELEMENT', -9); // This refers to the value of the key being empty, when that is not allowed
+define('PATTERNS_WARNING_GENERIC_VALIDATION_ERROR', -100); // All that is not coverered by previous cases
+
 
 define('PATTERNS_ALLOW_PUBLISH_DEFAULT', TRUE);
 
