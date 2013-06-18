@@ -192,10 +192,6 @@ function patterns_lab_submit($form, &$form_state) {
         continue;
       }
 
-      //if (substr($pattern->file, -4) != "yaml") {
-      //  continue;
-      //}
-
       if (empty($pattern->pattern)) {
         $errors[] = patterns_utils_toString($pattern);
         continue;
@@ -208,6 +204,8 @@ function patterns_lab_submit($form, &$form_state) {
         $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
         $included = array('pattern' => $included);
         $export['lab'][] = array('include' => $included);
+        // Include the current parent in the parenthood structure
+        $export = patterns_parenthood_add_parent($export, $pattern->uuuid);
       }
 
       $count++;
