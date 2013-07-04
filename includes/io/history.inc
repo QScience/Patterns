@@ -2,28 +2,16 @@
 
 /**
  * 
- * Checks the existance of previous parents and prepends the
- * given one at the beginning.
+ * Adds a history header in the info section of the Pattern.
  * 
- * @param array $pattern  In an array format, as received from the parser
- * @param string $uuuid  Parent UUUID
- * @return array Pattern with the new parent prepended
+ * @param array $pattern  Pattern in which the new header will be appended
+ * @param string $action  Action that has produced this pattern, currenlty 'merge' or 'pull'
+ * @param string $host  URL of the instance that performed the action
+ * @param array $ancestors  Array of UUUIDs to be appended
+ * 
+ * @return Pattern including the new header
  */
-function patterns_parenthood_add_parent($pattern, $uuuid) {
-  if (isset($pattern['info']['parents'])) {
-    array_unshift($pattern['info']['parents'], $uuuid);
-  }else{
-    $pattern['info']['parents'][] = $uuuid;
-  }
-  return $pattern;
-}
-
-function patterns_parenthood_add_header($pattern, $action, $host, $ancestors) {
-  /*if (isset($pattern['info']['parents'])) {
-    array_unshift($pattern['info']['parents'], $uuuid);
-  }else{
-    $pattern['info']['parents'][] = $uuuid;
-  }*/
+function patterns_history_add_header($pattern, $action, $host, $ancestors) {
   $pattern['info']['history'][$action] = array();
   $pattern['info']['history'][$action]['host'] = $host;
   $pattern['info']['history'][$action]['date'] = date_timestamp_get(date_create());

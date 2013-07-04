@@ -193,7 +193,7 @@ function patterns_lab_submit($form, &$form_state) {
       $count++;
     }
     //Add history header including all the merged patterns as ancestors
-    $export = patterns_parenthood_add_header($export, 'merge', $base_root, $ancestors);
+    $export = patterns_history_add_header($export, 'merge', $base_root, $ancestors);
   }
 
   // Prepare a zip file or a regular one
