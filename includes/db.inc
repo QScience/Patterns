@@ -139,8 +139,10 @@ function patterns_db_remove_pattern($pid) {
  *   The format of the pattern (YAML, XML, etc.)
  * @param mixed $username (Optional)
  *   A name for the author/uploader of the pattern. Defaults, logged user
+ * @param string $uuuid (Optional)
+ *   Optional argument to force the use of certain UUUID (i.e.: while clonning)  
  */
-function patterns_db_save_pattern($pattern, $path, $name, $format = NULL, $username = NULL) {
+function patterns_db_save_pattern($pattern, $path, $name, $format = NULL, $username = NULL, $uuuid = NULL) {
 
   $title        = patterns_utils_init_from_pattern('title', $pattern);
   $description  = patterns_utils_init_from_pattern('description', $pattern);
@@ -197,7 +199,7 @@ function patterns_db_save_pattern($pattern, $path, $name, $format = NULL, $usern
                             'descr' => $description,
                             'pid' => $pid,
                             'status' => $status,
-                            'uuuid' => patterns_utils_get_uuuid(),
+                            'uuuid' => (is_null($uuuid)) ? patterns_utils_get_uuuid() : $uuuid,
                             'author' => $username,
       );
       db_query("UPDATE {patterns} SET pattern = :pattern, title = :title, file = :file, updated = :updated, status = :status, description = :descr , uuuid = :uuuid, author = :author WHERE pid = :pid", $query_params);
@@ -208,7 +210,7 @@ function patterns_db_save_pattern($pattern, $path, $name, $format = NULL, $usern
                             'descr' => $description,
                             'pid' => $pid,
                             'status' => $status,
-                            'uuuid' => patterns_utils_get_uuuid(),
+                            'uuuid' => (is_null($uuuid)) ? patterns_utils_get_uuuid() : $uuuid,
                             'author' => $username,
       );
       db_query("UPDATE {patterns} SET pattern = :pattern, title = :title, file = :file, status = :status, description = :descr , uuuid = :uuuid , author = :author WHERE pid = :pid", $query_params);
@@ -225,7 +227,7 @@ function patterns_db_save_pattern($pattern, $path, $name, $format = NULL, $usern
                            'descr' => $description,
                            'time' => time(),
                            'status' => $status,
-                           'uuuid' => patterns_utils_get_uuuid(),
+                           'uuuid' => (is_null($uuuid)) ? patterns_utils_get_uuuid() : $uuuid,
                            'author' => $username,
     );
     db_query("INSERT INTO {patterns} (name, format, status, file, updated, enabled, title, description, pattern, uuuid, author) VALUES ( :name, :format, :status, :file, :time, 0, :title, :descr, :pattern, :uuuid, :author)", $query_params);
