@@ -189,12 +189,10 @@ function patterns_lab_submit($form, &$form_state) {
         $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
         $included = array('pattern' => $included);
         $export['lab'][] = array('include' => $included);
-        // Include the current parent in the parenthood structure
-        //$export = patterns_parenthood_add_parent($export, $pattern->uuuid);
         $ancestors[] = $pattern->uuuid;
       $count++;
     }
-    //Add history header
+    //Add history header including all the merged patterns as ancestors
     $export = patterns_parenthood_add_header($export, 'merge', $base_root, $ancestors);
   }
 
