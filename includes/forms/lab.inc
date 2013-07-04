@@ -157,6 +157,8 @@ function patterns_lab_validate($form, &$form_state) {
  * @param $form_state
  */
 function patterns_lab_submit($form, &$form_state) {
+  global $base_root;
+  
   // Load the patterns from database.
   @$patterns = patterns_db_get_patterns();
   $path = patterns_path_get_files_dir();
@@ -169,6 +171,7 @@ function patterns_lab_submit($form, &$form_state) {
   $export = patterns_api_add_info_section($form_state['values']['info']);
   $count = 0;
   $errors = array();
+  $ancestors = array();
   foreach ($form_state['values']['patterns_table'] as $pid) {
     if (!is_int($pid)) {
       $pattern = patterns_get_pattern($pid);
@@ -187,9 +190,12 @@ function patterns_lab_submit($form, &$form_state) {
         $included = array('pattern' => $included);
         $export['lab'][] = array('include' => $included);
         // Include the current parent in the parenthood structure
-        $export = patterns_parenthood_add_parent($export, $pattern->uuuid);
+        //$export = patterns_parenthood_add_parent($export, $pattern->uuuid);
+        $ancestors[] = $pattern->uuuid;
       $count++;
     }
+    //Add history header
+    $export = patterns_parenthood_add_header($export, 'merge', $base_root, $ancestors);
   }
 
   // Prepare a zip file or a regular one
