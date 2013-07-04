@@ -480,7 +480,7 @@ function patterns_io_save_pattern($content = NULL,
     global $user;
     $username = $user->name;
   }
-  $result = _patterns_io_save_pattern($content, $name, $format, $dir, $original, $username, $verbose);
+  $result = _patterns_io_save_pattern($content, $name, $format, $dir, $original, $username);
   
   if ($verbose && !empty($result['msg'])) {
     $status = ($result['status'] == PATTERNS_SUCCESS) ? 'status' : 'error';
