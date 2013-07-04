@@ -17,3 +17,20 @@ function patterns_parenthood_add_parent($pattern, $uuuid) {
   }
   return $pattern;
 }
+
+function patterns_parenthood_add_header($pattern, $action, $host, $ancestors) {
+  /*if (isset($pattern['info']['parents'])) {
+    array_unshift($pattern['info']['parents'], $uuuid);
+  }else{
+    $pattern['info']['parents'][] = $uuuid;
+  }*/
+  $pattern['info']['history'][$action] = array();
+  $pattern['info']['history'][$action]['host'] = $host;
+  $pattern['info']['history'][$action]['date'] = date_timestamp_get(date_create());
+  foreach ($ancestors as $uuuid) {
+    $pattern['info']['history'][$action]['uuuids'][] = $uuuid;
+  }
+  
+  
+  return $pattern;
+}
