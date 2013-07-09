@@ -157,7 +157,7 @@ function patterns_lab_validate($form, &$form_state) {
  * @param $form_state
  */
 function patterns_lab_submit($form, &$form_state) {
-  global $base_root;
+  global $base_url;
   
   // Load the patterns from database.
   @$patterns = patterns_db_get_patterns();
@@ -193,7 +193,7 @@ function patterns_lab_submit($form, &$form_state) {
       $count++;
     }
     //Add history header including all the merged patterns as ancestors
-    $export = patterns_history_add_header($export, 'merge', $base_root, $ancestors);
+    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php', $ancestors);
   }
 
   // Prepare a zip file or a regular one
