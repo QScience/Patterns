@@ -192,8 +192,8 @@ function patterns_lab_submit($form, &$form_state) {
         $ancestors[] = $pattern->uuuid;
       $count++;
     }
-    //Add history header including all the merged patterns as ancestors
-    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php', $ancestors);
+    //Add history header including all the merged patterns as ancestors. D2D ID will be null in case the module is not enabled
+    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php', variable_get('d2d_my_id', NULL), $ancestors);
   }
 
   // Prepare a zip file or a regular one
