@@ -489,24 +489,12 @@ function drush_patterns_export() {
  * 
  * @param string path to the patterns file
  * @param string optional machine readable name for the pattern you are importing
- * @param string optional validation level to validate the pattern
  * @return mixed bool|string FALSE upon failure; the name of the imported
  * pattern upon success
  */
-function drush_patterns_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN, $validate_level = PATTERNS_VALIDATE_ALL) {
-  switch (strtoupper($validate_level)) {
-    case 'ALL': $validate_level = PATTERNS_VALIDATE_ALL; break;
-    case 'SEMANTIC': $validate_level = PATTERNS_VALIDATE_SEMANTIC; break;
-    case 'TAG_SYNTAX': $validate_level = PATTERNS_VALIDATE_TAG_SYNTAX; break;
-    case 'TAG_EXISTS': $validate_level = PATTERNS_VALIDATE_TAG_EXISTS; break;
-    case 'INCLUDE': $validate_level = PATTERNS_VALIDATE_INCLUDE; break;
-    case 'SYNTAX': $validate_level = PATTERNS_VALIDATE_SYNTAX; break;
-    case 'FORMAT': $validate_level = PATTERNS_VALIDATE_FORMAT; break;
-    case 'SKIP': $validate_level = PATTERNS_VALIDATE_SKIP; break;
-    default: $validate_level = PATTERNS_VALIDATE_ALL; break;
-  }
+function drush_patterns_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN) {
 	drush_print(dt("Importing local pattern file: " . $file));
-	return patterns_io_import_file($file, $format, null, $validate_level);
+	return patterns_io_import_file($file, $format);
 }
 
 /**
