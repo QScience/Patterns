@@ -24,10 +24,10 @@ function _patterns_io_import_pre_checkings() {
   return FALSE;
 }
 
-function _patterns_io_import_validate_content($pattern) {
+function _patterns_io_import_validate_content($pattern, $level) {
   $patternscan = patterns_scan_pattern($pattern);
-  if (!_patterns_scan_validate_patternscan($patternscan)) {
-    $errors_on_scan = _patterns_scan_analyze_patternscan($patternscan);
+  if (!_patterns_scan_validate_patternscan($patternscan, false, $level)) {
+    $errors_on_scan = _patterns_scan_analyze_patternscan($patternscan, false, $level);
     drupal_set_message(t('Error parsing the YAML file: ' . implode(', ', $errors_on_scan)), 'error');
     return FALSE;
   }
@@ -91,7 +91,7 @@ function patterns_io_get_name_from_file($file) {
 	return pathinfo($file, PATHINFO_BASENAME);
 }
 
-function patterns_io_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN, $name = NULL) {
+function patterns_io_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN, $name = NULL, $level = PATTERNS_VALIDATE_ALL) {
   $ready = _patterns_io_import_pre_checkings();
 	if ($ready) {
 		return FALSE;
@@ -120,7 +120,7 @@ function patterns_io_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN, $name
 		return FALSE;
 	}
 	
-	$valid = _patterns_io_import_validate_content($pattern);
+	$valid = _patterns_io_import_validate_content($pattern, $level);
   if (!$valid) {
   	return FALSE;
   }
