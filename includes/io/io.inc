@@ -366,11 +366,12 @@ function _patterns_io_is_patterns_dir_ready($patterns_files_dir = NULL, $flag = 
 
 
 /**
- * Lower level primitive for patterns_io_save_pattern
+ * Lower level primitive for patterns_io_save_pattern.
+ * Includes an optional argument to force the UUUID
  * 
  * Returns a patterns_results object with a message, instead of a boolean
  */
-function _patterns_io_save_pattern($content = NULL, $name = NULL, $format = PATTERNS_FORMAT_YAML, $dir = NULL, $original = NULL, $username = NULL) {
+function _patterns_io_save_pattern($content = NULL, $name = NULL, $format = PATTERNS_FORMAT_YAML, $dir = NULL, $original = NULL, $username = NULL, $uuuid = NULL) {
   $status = PATTERNS_SUCCESS;
   $msg = NULL;
   
@@ -429,7 +430,7 @@ function _patterns_io_save_pattern($content = NULL, $name = NULL, $format = PATT
     return patterns_results(PATTERNS_ERR, $msg);
   }
   
-  patterns_db_save_pattern($pattern, $path, $name, $format, $username);
+  patterns_db_save_pattern($pattern, $path, $name, $format, $username, $uuuid);
   
   $link = l($name, 'admin/patterns/edit/' . $name);
   $msg = t('Pattern !name was saved in %path.', array('!name' => $link, '%path' => $path, ));
@@ -479,7 +480,7 @@ function patterns_io_save_pattern($content = NULL,
     global $user;
     $username = $user->name;
   }
-  $result = _patterns_io_save_pattern($content, $name, $format, $dir, $original, $username, $verbose);
+  $result = _patterns_io_save_pattern($content, $name, $format, $dir, $original, $username);
   
   if ($verbose && !empty($result['msg'])) {
     $status = ($result['status'] == PATTERNS_SUCCESS) ? 'status' : 'error';

@@ -64,6 +64,7 @@ module_load_include('inc', 'patterns', 'includes/parser/parser');
 module_load_include('inc', 'patterns', 'includes/io/io');
 module_load_include('inc', 'patterns', 'includes/io/import');
 module_load_include('inc', 'patterns', 'includes/io/download');
+module_load_include('inc', 'patterns', 'includes/io/history');
 
 module_load_include('inc', 'patterns', 'includes/api/api');
 

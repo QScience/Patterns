@@ -157,6 +157,8 @@ function patterns_lab_validate($form, &$form_state) {
  * @param $form_state
  */
 function patterns_lab_submit($form, &$form_state) {
+  global $base_url;
+  
   // Load the patterns from database.
   @$patterns = patterns_db_get_patterns();
   $path = patterns_path_get_files_dir();
@@ -164,25 +166,12 @@ function patterns_lab_submit($form, &$form_state) {
   $format   = $form_state['values']['format'];
   $filename = $form_state['values']['export_name'];
   $zip_flag = ($form_state['values']['to'] === PATTERNS_EXPORT_TO_ZIP) ? TRUE : FALSE;
-
-  if ($zip_flag) {
-    $zip = new ZipArchive();
-    // TODO: check if path ok; get better path if possible
-    $zip_filename = "patterns" . strval(time()) . ".zip";
-    if ($zip->open($path . $zip_filename, ZIPARCHIVE::CREATE)!=TRUE) {
-      exit("Cannot locally create zip-archive. Ask your administrator for help.");
-    }
-  }
-  else {
-    // the export array with a general info section
-    //$export = patterns_api_add_info_section($export, 'Exported');
-    $export = patterns_api_add_info_section($form_state['values']['info']);
-  }
-
-
-  $count = 0; // count how many patterns will be exported
+  
+  // Merged all the selected patterns
+  $export = patterns_api_add_info_section($form_state['values']['info']);
+  $count = 0;
   $errors = array();
-  // concatenate files to a single file or zip all files
+  $ancestors = array();
   foreach ($form_state['values']['patterns_table'] as $pid) {
     if (!is_int($pid)) {
       $pattern = patterns_get_pattern($pid);
@@ -192,63 +181,47 @@ function patterns_lab_submit($form, &$form_state) {
         continue;
       }
 
-      //if (substr($pattern->file, -4) != "yaml") {
-      //  continue;
-      //}
-
       if (empty($pattern->pattern)) {
         $errors[] = patterns_utils_toString($pattern);
         continue;
       }
 
-      if ($zip_flag) {
-        $zip->addFromString($pattern->name, patterns_parser_parse($pattern->pattern, $format));
-      }
-      else {
         $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
         $included = array('pattern' => $included);
         $export['lab'][] = array('include' => $included);
-      }
-
+        $ancestors[] = $pattern->uuuid;
       $count++;
     }
+    //Add history header including all the merged patterns as ancestors. D2D ID will be null in case the module is not enabled
+    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php', variable_get('d2d_my_id', NULL), $ancestors);
   }
 
+  // Prepare a zip file or a regular one
   if ($zip_flag) {
-    $zip->close();
-    $zip_path = $path . $zip_filename;
-    if (!is_readable($zip_path)) {
-      drupal_set_message("An error occurred: " . $zip_path . " isn't readable.", 'error'); // TODO: t()
+    // Cast to the expected format
+    $p[$filename] = $export;
+    $zip_path = patterns_create_zip($p, $format, $path, $filename);
+    
+    if (!$zip_path) {
+      return FALSE;
+    }else{
+      return patterns_download_zip($zip_path);
     }
-    else {
-      drupal_add_http_header("Content-type", "application/octet-stream");
-      drupal_add_http_header("Content-Disposition", "attachment;filename=" . $zip_path);
-      $err = @readfile($zip_path);
-      if ($err == FALSE) {
-        drupal_set_message("An error occurred: couldn't read " . $zip_path . ".", 'error'); // TODO: t()
-      }
+  }else{
+    // Parse into a file and add info to the exported pattern
+    $file = patterns_parser_dump($export, $format);
+    $file = patterns_parser_dump_comment("Patterns exported: " . $count, $format, $file);
+    $file = patterns_parser_dump_comment("Date and time: " . date('r'), $format, $file);
+    // Store only in the database or return as regular file
+    if ($form_state['values']['to'] === PATTERNS_EXPORT_TO_DB) {
+      patterns_io_save_pattern($file, $filename, $format, $path);
+      drupal_goto('admin/patterns/lab/');
+    }else{
+      drupal_add_http_header("Content-type", " text/plain; charset=utf-8");
+      drupal_add_http_header("Content-Disposition", "attachment;filename=" . $filename . '.' . $format);
+      print $file;
       exit;
     }
-    if (@drupal_unlink($zip_path) == FALSE) {
-      drupal_set_message("An error occurred: couldn't delete file " . $zip_path . ".", 'error'); // TODO: t()
-    }
-    return;
-  }
-
-  $file = patterns_parser_dump($export, $format);
-  // Add info to the exported pattern
-  $file = patterns_parser_dump_comment("Patterns exported: " . $count, $format, $file);
-  $file = patterns_parser_dump_comment("Date and time: " . date('r'), $format, $file);
-
-  if ($form_state['values']['to'] === PATTERNS_EXPORT_TO_DB) {
-    patterns_io_save_pattern($file, $filename, $format, $path);
-    drupal_goto('admin/patterns/lab/');
-  }
-  else {
-    drupal_add_http_header("Content-type", " text/plain; charset=utf-8");
-    drupal_add_http_header("Content-Disposition", "attachment;filename=" . $filename);
-    print $file;
-    exit;
   }
 }
 
