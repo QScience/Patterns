@@ -157,11 +157,11 @@ function menu_patterns_prepare($action, $tag, &$data) {
       if ($action == PATTERNS_MODIFY) {
         $data['customized'] = 1;
         $data['module'] = 'menu';
-        if ($data['disable']) {
+        if (isset($data['disable']) && $data['disable']) {
           $data['enabled'] = 0;
           unset($data['disable']);
         }
-        elseif ($data['enable']) {
+        elseif (isset($data['enable']) && $data['enable']) {
           $data['enabled'] = 1;
           unset($data['disable']);
         }
