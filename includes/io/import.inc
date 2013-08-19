@@ -68,7 +68,7 @@ function _patterns_io_import_check_name($name = '') {
  * Extracts and validates the pattern format from a file string
  * 
  * The pattern format can be specified as parameter, and it this case
- * the first parameter will be ignored. The formata will be anyway
+ * the first parameter will be ignored. The format will be anyway
  * validated.
  * 
  * @param string $file A path to a file
@@ -111,7 +111,7 @@ function patterns_io_import_file($file, $format = PATTERNS_FORMAT_UNKNOWN, $name
 	
 	$content = file_get_contents($file);
   if (!$content) {
-  	drupal_set_message(t('An error occurred while opening remote file.'), 'error');
+  	drupal_set_message(t('An error occurred while opening file.'), 'error');
   	return FALSE;
   }
   $pattern = patterns_parser_parse($content, $format);
