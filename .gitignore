@@ -7,3 +7,7 @@ test_*
 */*.swp
 findm
 *.patch
+\#*
+.\#*
+_*
+~*
