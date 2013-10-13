@@ -14,11 +14,10 @@ actions:
 
   - modify:
       tag: menu_item
-      menu_name_old: menu-footer-links
-      link_path_old: http://123.com
-      link_title_old: menu link title
-      menu_name: menu-footer-links
-      link_path: http://123.com
-      link_title: menu link title changed
-      disable: 1
+      menu_name_old: management
+      link_path_old: node
+      link_title_old: Patterns Link
+      menu_name: management
+      link_path: node
+      link_title: Modfied Patterns Link
 
