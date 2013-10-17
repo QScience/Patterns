@@ -50,7 +50,7 @@ function patterns_lab($form, &$form_state) {
     );
     $rows[$pid+1] = $row; // somehow we get (pid -1) in the submit handler
   }
-  
+
   $text = 'In this area you can experiment by mixing several patterns together into a new one. The resulting pattern file can be imported into the database or downloaded as a file.';
   $title = 'Patterns Lab';
   patterns_forms_add_page_header($form, $title, $text);
@@ -98,9 +98,9 @@ function patterns_lab($form, &$form_state) {
   );
 
   $form = patterns_forms_get_formats_selector($form,
-                                              patterns_forms_get_default_format(),
-                                              'Include all selected patterns in this format.',
-                                              FALSE
+          patterns_forms_get_default_format(),
+          'Include all selected patterns in this format.',
+          FALSE
   );
 
   $form['submit'] = array(
@@ -158,7 +158,7 @@ function patterns_lab_validate($form, &$form_state) {
  */
 function patterns_lab_submit($form, &$form_state) {
   global $base_url;
-  
+
   // Load the patterns from database.
   @$patterns = patterns_db_get_patterns();
   $path = patterns_path_get_files_dir();
@@ -166,7 +166,7 @@ function patterns_lab_submit($form, &$form_state) {
   $format   = $form_state['values']['format'];
   $filename = $form_state['values']['export_name'];
   $zip_flag = ($form_state['values']['to'] === PATTERNS_EXPORT_TO_ZIP) ? TRUE : FALSE;
-  
+
   // Merged all the selected patterns
   $export = patterns_api_add_info_section($form_state['values']['info']);
   $count = 0;
@@ -186,14 +186,15 @@ function patterns_lab_submit($form, &$form_state) {
         continue;
       }
 
-        $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
-        $included = array('pattern' => $included);
-        $export['lab'][] = array('include' => $included);
-        $ancestors[] = $pattern->uuuid;
+      $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
+      $included = array('pattern' => $included);
+      $export['lab'][] = array('include' => $included);
+      $ancestors[] = $pattern->uuuid;
       $count++;
     }
     //Add history header including all the merged patterns as ancestors. D2D ID will be null in case the module is not enabled
-    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php', variable_get('d2d_my_id', NULL), $ancestors);
+    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php',
+              variable_get('d2d_my_id', NULL), $ancestors);
   }
 
   // Prepare a zip file or a regular one
@@ -201,13 +202,13 @@ function patterns_lab_submit($form, &$form_state) {
     // Cast to the expected format
     $p[$filename] = $export;
     $zip_path = patterns_create_zip($p, $format, $path, $filename);
-    
+
     if (!$zip_path) {
       return FALSE;
-    }else{
+    } else{
       return patterns_download_zip($zip_path);
     }
-  }else{
+  } else {
     // Parse into a file and add info to the exported pattern
     $file = patterns_parser_dump($export, $format);
     $file = patterns_parser_dump_comment("Patterns exported: " . $count, $format, $file);
@@ -265,8 +266,8 @@ function _patterns_lab_get_exp_mode_options() {
  */
 function _patterns_lab_get_exp_type_options() {
   $options = array(
-      PATTERNS_MODIFY    => t('Export as a set of MODIFY actions'),
-      PATTERNS_CREATE   => t('Export as a set of CREATE actions'),
+    PATTERNS_MODIFY    => t('Export as a set of MODIFY actions'),
+    PATTERNS_CREATE   => t('Export as a set of CREATE actions'),
   );
 
   return $options;
