@@ -6,7 +6,6 @@
  * merging and pulling.
  */ 
 
-
 /**
  * Adds a history header in the info section of the pattern.
  * 
