@@ -12,9 +12,19 @@
  */
 function patterns_quickrun($form, &$form_state) {
 
+
   $form = array();
+  if (!patterns_engine_is_on()) {
+    drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the settings page if you want to execute the pattern. This attempt has been logged.'), 'warning');
+    watchdog('patterns', t('Attempt to quickrun a pattern with engine off.'));
+    drupal_goto('admin/patterns');
+    return $form;
+  }
 
   if (!patterns_parser_ready()) {
+    $messages = t('No available patterns parser was found.</br>');
+    $messages .= t(' Go to the !modules page to enable more Patterns parsers.', array('!modules' => l(t('modules'), 'admin/modules')));
+    drupal_set_message($messages, 'warning');
     return $form;
   }
 
@@ -39,7 +49,7 @@ function patterns_quickrun($form, &$form_state) {
 
   $form = patterns_forms_get_formats_selector($form);
   $form = patterns_forms_get_validation_level_selector($form, PATTERNS_VALIDATE_SYNTAX);
-  
+
   //Set the field as required for the quickrun case
   $form['format']['#required'] = TRUE;
 

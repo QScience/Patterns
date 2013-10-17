@@ -43,9 +43,17 @@ function patterns_config_settings($form, &$form_state) {
 
   $form['exec'] = array(
     '#type' => 'fieldset',
-    '#title' => t('File system options'),
+    '#title' => t('Patterns engine options'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
+  );
+
+  $form['exec']['patterns_engine_state'] = array(
+    '#type' => 'radios',
+    '#title' => t('Engine On / Off'),
+    '#description' => t('If Off, no pattern will be allowed to run. All other operations, such as validation, saving new patterns and listing current patterns, remain possible.'),
+    '#options' => array('on' => t('On'), 'off' => t('Off')),
+    '#default_value' => variable_get('patterns_engine_state', 'on'),
   );
 
   $form['exec']['patterns_default_running_mode'] = array(

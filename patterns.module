@@ -248,7 +248,7 @@ function patterns_menu() {
     'access arguments' => array('get patterns'),
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
-  );	 
+  );
 
   // IMPORT
 
@@ -318,7 +318,7 @@ function patterns_menu() {
 
 /**
  * Implements hook_libraries_info().
- * 
+ *
  * Requires Codemirror >= 3.01 (new path for addons).
  */
 function patterns_libraries_info() {
@@ -358,7 +358,12 @@ function patterns_libraries_info() {
  */
 function patterns_list() {
   $form = array();
-  
+
+  if (!patterns_engine_is_on()) {
+    $settings = l(t('settings'), 'admin/patterns/settings');
+    drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the !settings page.', array('!settings' => $settings)), 'warning');
+  }
+
   if (!patterns_parser_ready()) {
     $messages = t('No available patterns parser was found.</br>');
     $messages .= t(' Go to the !modules page to enable more Patterns parsers.', array('!modules' => l(t('modules'), 'admin/modules')));
@@ -391,13 +396,15 @@ function patterns_list() {
     '#suffix' => '</a>',
   );
 
-  $form['commands']['quickrun'] = array(
-    '#type' => 'button',
-    '#value' => t('Quick Run'),
-    '#attributes' => array('style' => 'float:right'),
-    '#prefix' => '<a href="' . url('admin/patterns/quickrun') . '">',
-    '#suffix' => '</a>',
-  );
+  if (patterns_engine_is_on()) {
+    $form['commands']['quickrun'] = array(
+      '#type' => 'button',
+      '#value' => t('Quick Run'),
+      '#attributes' => array('style' => 'float:right'),
+      '#prefix' => '<a href="' . url('admin/patterns/quickrun') . '">',
+      '#suffix' => '</a>',
+    );
+  }
 
   $output = drupal_render($form);
 
@@ -440,10 +447,17 @@ function patterns_enable_pattern($form, &$form_state, $pid) {
 
   $form = array();
 
+  if (!patterns_engine_is_on()) {
+    drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the settings page if you want to execute the pattern. This attempt has been logged.'), 'warning');
+    watchdog('patterns', t('Attempt to run a pattern with engine off.'));
+    drupal_goto('admin/patterns');
+    return $form;
+  }
+
   if (!patterns_parser_ready()) {
     $messages = t('No available patterns parser was found.</br>');
     $messages .= t(' Go to the !modules page to enable more Patterns parsers.', array('!modules' => l(t('modules'), 'admin/modules')));
-    drupal_set_message($messages,'warning');
+    drupal_set_message($messages, 'warning');
     return $form;
   }
 
@@ -459,16 +473,16 @@ function patterns_enable_pattern($form, &$form_state, $pid) {
   }
 
   $scan = patterns_scan_pattern($pattern->pattern);
-  
+
   if (!_patterns_scan_validate_patternscan($scan, TRUE, PATTERNS_VALIDATE_ALL, TRUE)) {
   	$link = l('syntax and content', '/admin/patterns/edit/' . $pid);
-  
+
   	$form['invalid'] = array(
     	'#markup' => t('This pattern did not pass the validation. This may be due to an error in the pattern itself, or to the current configuration of your database. If you are trying to run interdependent actions in the same pattern (E.g. creating a vocabulary and then adding a term) this could be normal.'),
    		'#prefix' => '<div id="important"><strong>Ooops! </strong>',
   	);
   }
-  
+
   $form['pid'] = array(
     '#type' => 'value',
     '#value' => $pid,
@@ -662,10 +676,17 @@ function patterns_start_engine($pattern, $params = array(), $mode = 'batch') {
   	drupal_set_message(t('The pattern seems empty...I cannot run it!'), 'error');
   	return FALSE;
   }
+
+  if (!patterns_engine_is_on()) {
+    drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the settings page if you want to execute the pattern. This attempt has been logged.'), 'warning');
+    watchdog('patterns', t('Attempt to run a pattern with engine off.'));
+    return FALSE;
+  }
+
   /////////////////////////////////////////
   // Get Patterns details
   $patterns_details = patterns_parser_get_pattern_details($pattern, PATTERNS_VALIDATE_TAG_EXISTS);
-  
+
   if ($patterns_details === FALSE) {
     drupal_set_message(t('Fatal errors where found in the pattern. Aborting.'), 'error');
     return FALSE;
@@ -709,11 +730,11 @@ function patterns_start_engine($pattern, $params = array(), $mode = 'batch') {
 
   $actions_map = array('patterns' => $infos, 'map' => NULL); // Fix this.
   ////////////////////////////////////////
-	
+
   drupal_set_time_limit(0);
-  
+
   $fun = 'patterns_execute_pattern_' . $mode;
-  
+
   // Execute the Pattern using the selected mode.
   $fun($pattern, $params, $patterns_details, $actions_map);
 
@@ -873,4 +894,9 @@ function patterns_install_modules_in_pattern($pattern) {
     return FALSE;
   }
   return TRUE;
+}
+
+
+function patterns_engine_is_on() {
+  return variable_get('patterns_engine_state', 'off') === 'on';
 }

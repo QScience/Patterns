@@ -15,6 +15,7 @@ module_load_include('inc', 'patterns', 'includes/utils');
  * Implements hook_install().
  */
 function patterns_install() {
+  variable_set('patterns_engine_state', 'on');
 }
 
 /**

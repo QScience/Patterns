@@ -46,8 +46,8 @@ function patterns_editor($form_id, $pattern = array()) {
   $pattern = patterns_get_pattern_obj($pattern);
 
   $form = drupal_get_form($form_id, $pattern);
-  
-  if(($form_id == "patterns_quickrun" || $form_id == "patterns_import_source") && !patterns_parser_ready()){ 
+
+  if(($form_id == "patterns_quickrun" || $form_id == "patterns_import_source") && !patterns_parser_ready()){
     $messages = t('No available patterns parser was found.</br>');
     $messages .= t(' Go to the !modules page to enable more Patterns parsers.', array('!modules' => l(t('modules'), 'admin/modules')));
     drupal_set_message($messages,'warning');
@@ -109,6 +109,12 @@ function patterns_edit_page($pid = NULL) {
  * @ingroup forms
  */
 function patterns_edit($form, &$form_state, $pattern, $full = TRUE) {
+
+  if (!patterns_engine_is_on()) {
+    $settings = l(t('settings'), 'admin/patterns/settings');
+    drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the !settings page if you want to execute the pattern.', array('!settings' => $settings)), 'warning');
+  }
+
   // TODO: this form could be reused, see function patterns_enable_pattern().
   // Default
   $content = '# Pattern';
@@ -220,11 +226,13 @@ function patterns_edit($form, &$form_state, $pattern, $full = TRUE) {
     '#suffix' => '</span> ',
   );
 
-  $form['fs']['run'] = array(
-    '#prefix' => '<span style=\'margin-right:10px\'>',
-    '#markup' => l(t('Run current pattern'), 'admin/patterns/enable/' . $pattern->pid),
-    '#suffix' => '</span> ',
-  );
+  if (patterns_engine_is_on()) {
+    $form['fs']['run'] = array(
+      '#prefix' => '<span style=\'margin-right:10px\'>',
+      '#markup' => l(t('Run saved pattern'), 'admin/patterns/enable/' . $pattern->pid),
+      '#suffix' => '</span> ',
+    );
+  }
 
   $form['fs']['cancel'] = array(
     '#markup' => l(t('Back'), 'admin/patterns'),
