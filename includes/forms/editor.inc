@@ -42,7 +42,6 @@ function patterns_editor_create_page($pid = NULL) {
   */
 function patterns_editor($form_id, $pattern = array()) {
 
-
   $pattern = patterns_get_pattern_obj($pattern);
 
   $form = drupal_get_form($form_id, $pattern);

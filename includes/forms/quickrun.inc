@@ -12,7 +12,6 @@
  */
 function patterns_quickrun($form, &$form_state) {
 
-
   $form = array();
   if (!patterns_engine_is_on()) {
     drupal_set_message(t('Patterns engine is off. You can change the state of the engine from the settings page if you want to execute the pattern. This attempt has been logged.'), 'warning');
