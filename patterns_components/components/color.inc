@@ -35,13 +35,13 @@ function color_patterns_export_all_color($args = NULL, &$result = NULL) {
 
       $data = array('tag' => 'color', 'theme' => $voc->name);
       $data = array_merge($data, $vocp);
-      
+
       $current_scheme = variable_get('color_' . $voc->name . '_palette', array());
       if (empty($current_scheme)) {
       	$scheme_name = array('scheme'=>'default');
       	$data = array_merge($data, $scheme_name);
       }
-      
+
       $action = array(PATTERNS_MODIFY => $data);
       array_push($result, $action);
 
@@ -49,23 +49,6 @@ function color_patterns_export_all_color($args = NULL, &$result = NULL) {
     }
   }
   return $result;
-}
-// returns arguments needed for the forms when processing automatically
-// $loop is set if we want to extract all values
-function color_patterns_get_arguments($action, $tag, $form_id, &$loop = FALSE) {
-  $return = array();
-  $themes = system_rebuild_theme_data();
-  $loop = TRUE;
-  foreach ($themes as $voc) {
-    if (!empty($theme->info['hidden'])) {
-      continue;
-    }
-    if (color_get_info($voc->name)) {
-      array_push($return, array($voc->name));
-    }
-  }
-
-  return $return;
 }
 
 // Prepare data for processing
@@ -83,7 +66,7 @@ function color_patterns_validate($action, $tag, &$data) {
   $msg = '';
 	/*
  * Syntactic validation
- * 
+ *
  */
 	switch ($action) {
         case PATTERNS_CREATE:
@@ -121,13 +104,13 @@ function color_patterns_validate($action, $tag, &$data) {
           $theme = $data['theme'];
           //Create semantic warning if the theme does not exist
           if (!array_key_exists($theme, $current_themes)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The theme %theme does not exist in the system.', array('%theme' =>$theme)));
           }
           break;
       }
       return patterns_results($status, $msg, $result);
-	
+
  /* $status = PATTERNS_SUCCESS;
   $msg = '';
   foreach ($data['palette'] as $key => $color) {

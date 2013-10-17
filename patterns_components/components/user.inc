@@ -2,7 +2,7 @@
 /*
  * TODO: Use rolename instead of rid in the case of permissions
  * TODO: Add more descriptive messages after merging with the new core branch (custom function cases)
- * 
+ *
  * @file
  * Patterns component for users.
  */
@@ -29,7 +29,7 @@ function user_patterns($data) {
     PATTERNS_FILES => $files,
     PATTERNS_EXPORT => array(PATTERNS_EXPORT_ALL => 'user_patterns_export_all_permissions', ),
   );
-  
+
   $actions['user'] = array(
       PATTERNS_INFO => t('Create/Modify/Delete Users'),
       PATTERNS_CREATE => array('user_register_form'),
@@ -38,7 +38,7 @@ function user_patterns($data) {
       PATTERNS_FILES => $files,
       PATTERNS_EXPORT => array(PATTERNS_EXPORT_ALL => 'user_patterns_export_all_users', ),
   );
-  
+
   $actions['role_users'] = array(
       PATTERNS_INFO => t('Add/Remove roles to users'),
       PATTERNS_CREATE => array('set_role_users'), // Run through custom function.
@@ -52,18 +52,18 @@ function user_patterns($data) {
 
 /**
  *
- * Returns a set of PATTERNS_CREATE or PATTERNS_MODIFY actions 
+ * Returns a set of PATTERNS_CREATE or PATTERNS_MODIFY actions
  * with the whole set of roles currently stored in the system.
  *
  * @param array $args  Set of arguments received from the form.
  * @param string $result  Current set of actions for the whole process.
- * 
+ *
  * @return array $result  Set of actions after performing the changes.
  */
 function user_patterns_export_all_roles($args = NULL, &$result = NULL) {
   $roles = user_roles(TRUE);
   $result = array();
-  
+
   //Got through all the roles and prepare set of actions according to the type of export process
   switch ($args['type']) {
     case PATTERNS_CREATE :
@@ -73,7 +73,7 @@ function user_patterns_export_all_roles($args = NULL, &$result = NULL) {
         $data['name'] = $role;
         $action = array(PATTERNS_CREATE => $data);
         array_push($result, $action);
-      }      
+      }
       break;
     case PATTERNS_MODIFY :
       foreach ($roles as $rid => $role) {
@@ -86,18 +86,18 @@ function user_patterns_export_all_roles($args = NULL, &$result = NULL) {
       }
       break;
   }
-    
+
   return $result;
 }
 
 /**
  *
- * Returns a set of PATTERNS_MODIFY actions ONLY with the whole 
+ * Returns a set of PATTERNS_MODIFY actions ONLY with the whole
  * set of roles currently stored in the system.
  *
  * @param array $args  Set of arguments received from the form.
  * @param string $result  Current set of actions for the whole process.
- * 
+ *
  * @return array $result  Set of actions after performing the changes.
  */
 function user_patterns_export_all_permissions($args = NULL, &$result = NULL) {
@@ -173,7 +173,7 @@ function user_patterns_export_all_users($args = NULL, &$result = NULL) {
 
 /**
  *
- * Returns a set of PATTERNS_CREATE actionswith the whole set of 
+ * Returns a set of PATTERNS_CREATE actionswith the whole set of
  * relationsps between users and roles currently stored in the system.
  *
  * @param array $args  Set of arguments received from the form.
@@ -184,7 +184,7 @@ function user_patterns_export_all_users($args = NULL, &$result = NULL) {
 function user_patterns_export_all_role_users($args = NULL, &$result = NULL) {
   $roles = user_roles(TRUE);
   $result = array();
-  
+
   //A PATTERNS_CREATE action is generated for each role
   foreach ($roles as $rid => $role) {
     $data = array('tag' => 'role_users');
@@ -195,42 +195,6 @@ function user_patterns_export_all_role_users($args = NULL, &$result = NULL) {
   }
 
   return $result;
-}
-
-
-// returns arguments needed for the forms when processing automatically
-// $loop is set if we want to extract all values
-function user_patterns_get_arguments($action, $tag, $form_id, &$loop = FALSE) {
-  $return = array();
-  $loop = TRUE;
-  if ($form_id == 'user_profile_form') {
-    $query = db_select('users', 'u');
-    $query->condition('u.uid', 0, '<>');
-    $query = $query->extend('PagerDefault')->extend('TableSort');
-    $query->fields('u', array('uid'));
-    $result = $query->execute()->fetchAll();
-    foreach ($result as $account) {
-      $user = user_load($account->uid);
-      array_push($return, array($user));
-    }
-  }
-  elseif ($form_id == 'user_admin_role') {
-    $roles = user_roles();
-    foreach ($roles as $rid => $name) {
-      if (!($rid == DRUPAL_ANONYMOUS_RID || $rid == DRUPAL_AUTHENTICATED_RID)) {
-        array_push($return, array((object) array('rid' => $rid, 'name' => $name, 'weight' => 0)));
-      }
-    }
-  }
-  elseif ($form_id == 'user_admin_permissions') {
-    $roles = user_roles();
-    foreach ($roles as $rid => $name) {
-      if (!($rid == DRUPAL_ANONYMOUS_RID || $rid == DRUPAL_AUTHENTICATED_RID)) {
-        array_push($return, array($rid));
-      }
-    }
-  }
-  return $return;
 }
 
 /**
@@ -285,11 +249,11 @@ function user_patterns_prepare($action, $tag, &$data) {
 }
 
 /**
- * 
+ *
  * @param string $action Type of action being executed
  * @param string $tag Type of tag to be validated
  * @param array $data Associative array containing the data action processed from the pattern
- * 
+ *
  * @return mixed through patterns_results($status, $msg, $result) function. Status of the operation,
  * error messages and semantic warnings through $result
  */
@@ -297,14 +261,14 @@ function user_patterns_validate($action, $tag, &$data) {
   $result = array();
   $status = PATTERNS_SUCCESS;
   $msg = '';
-  
+
 /*
  * Syntactic validation:
- * - Syntactic warnings: They refer to wrong grammar statements that will not 
+ * - Syntactic warnings: They refer to wrong grammar statements that will not
  * provoke any execution error. Ex.: non-interpretable attributes.
  * - Syntactic errors: They refer to wrong grammar statements that will provoke
  * an execution error. Ex.: misspelling in required attribute.
- * 
+ *
  */
   switch ($tag) {
     case 'role':
@@ -358,7 +322,7 @@ function user_patterns_validate($action, $tag, &$data) {
         if(_patterns_has_uninterpretable_attributes($data, $mandatory_attributes, $msg)) {
           $status = PATTERNS_WARN;
         }
-        
+
       }
       break;
     case 'user':
@@ -420,12 +384,12 @@ function user_patterns_validate($action, $tag, &$data) {
         }
         break;
   }
-  
+
 /*
- * Semantic validation: 
- * - Semantic warnings: They refer to the meaning of the pattern itself, and they 
+ * Semantic validation:
+ * - Semantic warnings: They refer to the meaning of the pattern itself, and they
  * might provoke execution errors if they are not solved.
- * 
+ *
  */
   switch ($tag) {
     case 'role':
@@ -436,7 +400,7 @@ function user_patterns_validate($action, $tag, &$data) {
           $role_name = $data['name'];
           //Create semantic warning if the role name has already been defined
           if (in_array($role_name, $current_roles)) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
               t('The role name %role_name already exists in the system.', array('%role_name' =>$role_name,)));
           }
           break;
@@ -445,19 +409,19 @@ function user_patterns_validate($action, $tag, &$data) {
           $role_rid = $data['rid'];
           //Create semantic warning if the rid does not exist
           if (!array_key_exists($role_rid, $current_roles)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The role id %rid does not exist in the system.', array('%rid' =>$role_rid,)));
           }
           //Create semantic warning if the role name has already been defined
           if (in_array($role_name, $current_roles)) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
               t('The role name %role_name already exists in the system.', array('%role_name' =>$role_name,)));
           }
           break;
         case PATTERNS_DELETE:
           $role_rid = $data['rid'];
           if (!array_key_exists($role_rid, $current_roles) && !in_array($role_rid, $current_roles)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The value %rid does not exist in the system as role name neither as a numeric rid.', array('%rid' =>$role_rid,)));
           }
           break;
@@ -485,7 +449,7 @@ function user_patterns_validate($action, $tag, &$data) {
               t('The role %role does not exist in the system.', array('%role' =>$role,)));
         }
       }
-            
+
       break;
     case 'user':
       $users = _user_patterns_get_all_users();
@@ -526,7 +490,7 @@ function user_patterns_validate($action, $tag, &$data) {
               $result[] = array(PATTERNS_WARNING_UNMET_DEPENDENCY =>
                   t('The role %role does not exist in the system.', array('%role' =>$data['role'],)));
             }
-            //We raised a semantic error for each username that does not exist. 
+            //We raised a semantic error for each username that does not exist.
             foreach ($data['users'] as $username) {
               if (!user_load_by_name($username)) {
                 $result[] = array(PATTERNS_WARNING_UNMET_DEPENDENCY =>
@@ -644,7 +608,7 @@ function set_user_permissions($form_id, &$form_state) {
     }
   }
   patterns_set_user_permissions($role->rid, $permissions);
-  
+
   $msg = t('Permissions for role %role successfully updated.', array('%role' => $role->name));
   return patterns_results(PATTERNS_SUCCESS, $msg);
 }
@@ -661,10 +625,10 @@ function patterns_set_user_permissions($rid, $permissions) {
 }
 
 /**
- * 
+ *
  * Wraps the call to drupal_form_submit for 'user_profile_form'.
  * Gathers all the expected values from the form and prepare them for the query.
- * 
+ *
  * @param string $form_id  String containing the form ID. In the case of custom functions the value is empty.
  * @param array $form_state  Set of values after parsing the action.
  */
@@ -674,15 +638,15 @@ function set_user_values($form_id, &$form_state) {
   //Prepare all the attributes for the query, but uid
   $attributes = array_diff_key($form_state['values'], array('uid' => $uid));
   patterns_set_user_values($uid, $attributes);
-  
+
   $msg = t('Information for user %uid successfully updated.', array('%uid' => $uid));
   return patterns_results(PATTERNS_SUCCESS, $msg);
 }
 
 /**
- * 
+ *
  * Run a query to update the fields of the user
- * 
+ *
  * @param string $uid  User ID
  * @param array $attributes  Set of values that will be updated. All are optional.
  */
@@ -711,7 +675,7 @@ function set_role_users($form_id, &$form_state) {
   }
   //Add the role to the list of uids
   user_multiple_role_edit($uids, 'add_role', $role->rid);
-  
+
   $msg = ((count($uids) > 0) ? t('Role %role was assigned to the following users: %users.',
       array('%role' => $form_state['values']['role'],'%users' => implode(', ', $uids))) : t('Role %role was applied to no user.', array('%role' => $form_state['values']['role'])));
   return patterns_results(PATTERNS_SUCCESS, $msg);
@@ -731,10 +695,10 @@ function unset_role_users($form_id, &$form_state) {
     $u = user_load_by_name($username);
     $uids[] = $u->uid;
   }
-  
+
   //Remove the role to the list of urls
   user_multiple_role_edit($uids, 'remove_role', $role->rid);
-  
+
   $msg = ((count($uids) > 0) ? t('Role %role was removed to the following users: %users.',
       array('%role' => $form_state['values']['role'],'%users' => implode(', ', $uids))) : t('Role %role was removed to no user.', array('%role' => $form_state['values']['role'])));
   return patterns_results(PATTERNS_SUCCESS, $msg);
@@ -753,9 +717,9 @@ function _user_patterns_get_all_users() {
 }
 
 /**
- * 
+ *
  * Returns a list of usernames that belong to the given Role ID
- * 
+ *
  * @param string $role  Role ID to filter by
  * @return array List of usernames that currently hold that role
  */

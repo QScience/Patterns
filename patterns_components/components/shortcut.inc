@@ -156,13 +156,13 @@ function shortcut_patterns_export_all_user_set($args = NULL, $result = NULL) {
         ->fields('ssu', array('uid', 'set_name'))
         ->fields('ss', array('set_name', 'title'));
       $result = $query->execute();
-      
+
       //Loop through the elements in the $result set to prepare the actions using set title and username
       foreach ($result as $record) {
-        $action = array(PATTERNS_MODIFY => 
+        $action = array(PATTERNS_MODIFY =>
           array(
             'tag' => 'shortcut_set_user',
-            'name' => $record->title, 
+            'name' => $record->title,
             'user' => user_load($record->uid)->name));
         array_push($actions, $action);
       }
@@ -216,11 +216,11 @@ function shortcut_patterns_prepare($action, $tag, &$data) {
 }
 
 /**
- * 
+ *
  * @param string $action Type of action being executed
  * @param string $tag Type of tag to be validated
  * @param array $data Associative array containing the data action processed from the pattern
- * 
+ *
  * @return mixed through patterns_results($status, $msg, $result) function. Status of the operation,
  * error messages and semantic warnings through $result
  */
@@ -246,7 +246,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if ($set) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
                 t('The shortcut set %set_name already exists in the system', array('%set_name' => $data['new'],)));
           }
           break;
@@ -257,7 +257,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if ($set_for_title) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
               t('The shortcut set %set_name already exists in the system', array('%set_name' => $data['title'],)));
           }
           $set_for_searchtitle = db_select('shortcut_set', 'ss')
@@ -266,7 +266,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if (!($set_for_searchtitle)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The shortcut set %oldname does not exist in the system.', array('%oldname' =>$data['searchtitle'],)));
           }
           if (!($set_for_title)&& $set_for_searchtitle) {
@@ -282,7 +282,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if (!($set_for_searchtitle)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The shortcut set %oldname does not exist in the system.', array('%oldname' =>$data['searchtitle'],)));
           }
           else {
@@ -305,7 +305,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if (!($set_for_searchtitle)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The shortcut set %oldname does not exist in the system.', array('%oldname' =>$data['searchtitle'],)));
           }
           else {
@@ -316,7 +316,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                               ->execute()
                               ->fetchAssoc();
             if ($shortcutlink) {
-              $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+              $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
                 t('The shortcut link %shortcut_link_title already exists in the system', array('%shortcut_link_title' => $data['shortcut_link_title'],)));
             }
             else {
@@ -334,7 +334,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                           ->execute()
                           ->fetchField();
           if (!($set_name)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The shortcut set %oldname does not exist in the system.', array('%oldname' =>$data['set_name'],)));
           }
           else {
@@ -345,7 +345,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                               ->execute()
                               ->fetchAssoc();
             if (!($shortcutlink)) {
-              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
                 t('The shortcut link %oldname does not exist in the system.', array('%oldname' =>$data['link_title'],)));
             }
             $data['shortcut_link_parm'] = $shortcutlink;
@@ -364,7 +364,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
                   ->execute()
                   ->fetchField();
           if (!($set_for_searchtitle)) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The shortcut set %oldname does not exist in the system.', array('%oldname' =>$data['searchtitle'],)));
           }
           else {
@@ -372,7 +372,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
             if (isset($data['user'])) {
               module_load_include('module', 'user');
               if (!($data['account'] = user_load_by_name( $data['user']))) {
-                $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+                $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
                   t('The user %username does not exist in the system.', array('%username' =>$data['user'],)));
               }
             }
@@ -389,7 +389,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
   }
   return patterns_results($status, $msg, $result);
 }
- 
+
 /**
  * hook_patterns_validate()
  */
@@ -469,7 +469,7 @@ function shortcut_patterns_validate($action, $tag, &$data) {
     }
 
   }
-   
+
   return patterns_results($status, $msg);
 }
 */
@@ -512,22 +512,6 @@ function shortcut_patterns_params($action, $form_id, &$data = NULL, &$a) {
       break;
   }
   return patterns_results(PATTERNS_SUCCESS, t('Execution successful'), $result);
-}
-
-/**
- * hook_patterns_get_arguments()
- */
-function shortcut_patterns_get_arguments($action, $tag, $form_id, &$loop = FALSE) {
-  if ($tag == "shortcut_set") {
-    $loop = TRUE;
-    $return = array();
-    $sets = shortcut_sets();
-    foreach ($sets as $set_name => $value) {
-      array_merge($return, array('oldname' => $value['title']));
-      return $return;
-    }
-    return $return;
-  }
 }
 
 /**

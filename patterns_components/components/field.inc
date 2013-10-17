@@ -141,50 +141,6 @@ function field_patterns_export_all_weight($args = NULL, &$result = NULL){
      return $result;
 
 }*/
-// returns arguments needed for the forms when processing automatically
-// $loop is set if we want to extract all values
-function field_patterns_get_arguments($action, $tag, $form_id, &$loop = FALSE) {
-  _field_info_collate_fields(true);
-  _field_info_collate_types(true);
-  $return = array();
-  if ($form_id == 'field_ui_field_settings_form') {
-
-    $loop = TRUE;
-    $instances = field_read_instances();
-    foreach ($instances as $voc) {
-      array_push($return, array($voc));
-    }
-  }
-  elseif ($form_id == 'field_ui_field_edit_form') {
-    $loop = TRUE;
-    $instances = field_read_instances();
-    foreach ($instances as $voc) {
-      array_push($return, array(field_info_instance($voc['entity_type'], $voc['field_name'], $voc['bundle'])));
-    }
-  }
- /* elseif ($form_id == 'field_ui_field_overview_form') {
-    $loop = TRUE;
-    $instances = field_read_instances();
-    foreach ($instances as $voc) {
-      $result = array(
-        'entity_type' => $voc['entity_type'],
-        'bundle' => $voc['bundle'],
-      );
-      $j = 0;
-      foreach ($return as $v) {
-        if ($v['entity_type'] == $voc['entity_type'] && $v['bundle'] == $voc['bundle']) {
-          $j = 1;
-          break;
-        }
-      }
-      if ($j == 0) {
-        array_push($return, $result);
-      }
-    }
-  }*/
-
-  return $return;
-}
 
 // Prepare data for processing
 function field_patterns_prepare($action, $tag, &$data = NULL) {
@@ -195,7 +151,7 @@ function field_patterns_prepare($action, $tag, &$data = NULL) {
 // @TODO: remove unnecessary stuff from $data array;
   if (isset($data['name'])) {
     $data['field_name'] = $prefix . $data['name'];
-    unset($data['name']);   
+    unset($data['name']);
   }
   if (isset($data['entity'])) {
     $data['entity_type'] = $data['entity'];
@@ -235,7 +191,7 @@ function field_patterns_validate($action, $tag, &$data) {
   $msg = '';
 	/*
  * Syntactic validation
- * 
+ *
  */
  switch ($tag) {
     case 'field':
@@ -283,7 +239,7 @@ function field_patterns_validate($action, $tag, &$data) {
           if (!_patterns_has_all_mandatory_attributes($data, $mandatory_attributes, $msg)) {
             return patterns_results(PATTERNS_ERR, $msg);
           }
-          
+
           $interpretable_attributes = array('field_name','entity_type','bundle','instance','field','fields','settings','required','widget','display',$data['field_name']);
           if(_patterns_has_uninterpretable_attributes($data, $interpretable_attributes, $msg)) {
             $status = PATTERNS_WARN;
@@ -307,40 +263,40 @@ function field_patterns_validate($action, $tag, &$data) {
  * Semantic validation
  */
  $exist = field_read_instance($data['entity_type'], $data['field_name'],$data['bundle']); // TODO: count()
-    
+
 	switch ($tag) {
 	case 'field':
       switch ($action) {
         case PATTERNS_MODIFY:
           //Create semantic warning if the rid does not exist
           if (!$exist) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The field instance %field_name with entity type %entity_type in bundle %bundle dose not exist in the system.', array('%field_name' =>$data['field_name'],'%entity_type'=>$data['entity_type'],'%bundle'=>$data['bundle'])));
           }
           break;
           break;
       }
      break;
-      
-    case 'instance':     
+
+    case 'instance':
       switch ($action) {
         case PATTERNS_CREATE:
             //Create semantic warning if the role name has already been defined
           if ($exist) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
               t('The field instance %field_name with entity type %entity_type in bundle %bundle already exists in the system.', array('%field_name' =>$data['field_name'],'%entity_type'=>$data['entity_type'],'%bundle'=>$data['bundle'])));
           }
           break;
         case PATTERNS_MODIFY:
           //Create semantic warning if the rid does not exist
           if (!$exist) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The field instance %field_name with entity type %entity_type in bundle %bundle dose not exist in the system.', array('%field_name' =>$data['field_name'],'%entity_type'=>$data['entity_type'],'%bundle'=>$data['bundle'])));
           }
           break;
         case PATTERNS_DELETE:
           if (!$exist ) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
              t('The field instance %field_name with entity type %entity_type in bundle %bundle dose not exist in the system.', array('%field_name' =>$data['field_name'],'%entity_type'=>$data['entity_type'],'%bundle'=>$data['bundle'])));
           }
           break;
@@ -348,7 +304,7 @@ function field_patterns_validate($action, $tag, &$data) {
       break;
   }
   return patterns_results($status, $msg, $result);
-	
+
  /* $status = PATTERNS_SUCCESS;
   $msg = '';
   if ($tag == 'field_weight') {

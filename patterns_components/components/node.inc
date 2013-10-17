@@ -83,31 +83,6 @@ function node_patterns_export_all_nodes($args = NULL, &$result = NULL) {
 }
 
 
-
-// returns arguments needed for the forms when processing automatically
-// $loop is set if we want to extract all values
-function node_patterns_get_arguments($action, $tag, $form_id, &$loop = FALSE) {
-  if ($tag == 'content_type' && $action == PATTERNS_MODIFY) {
-      $types = (object) _node_types_build();
-      foreach (array_values($types->types) as $type) {
-        return array($type);
-      }
-      return array(); // ???
-  }
-  elseif ($tag == 'content_type_extract_all') {
-    $loop = TRUE;
-    if ($form_id == 'node_type_form') {
-      $types = (object) _node_types_build();
-      $return = array();
-      foreach (array_values($types->types) as $type) {
-        array_push($return, array($type));
-      }
-      return $return;
-    }
-  }
-}
-
-
 function node_patterns_prepare($action, $tag, &$data) {
   if ($tag == 'content_type') {
     if ($action === PATTERNS_CREATE or $action === PATTERNS_MODIFY) {
@@ -180,7 +155,7 @@ function node_patterns_validate($action, $tag, &$data) {
              ->execute()
              ->fetchField();
           if (!$node_item) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The content type: "%type" does not exist in the system.', array('%type' =>$data['type'],)));
           }
           break;
@@ -199,9 +174,9 @@ function node_patterns_validate($action, $tag, &$data) {
           elseif (!empty($data['nid'])) {
             $data['node'] = node_load($data['nid']);
             if ($data['node'] === FALSE) {
-              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
                 t('The node: "%oldname" does not exist in the system.', array('%oldname' =>$data['nid'],)));
-            } 
+            }
             else {
               $data['node'] = (object) $data['node'];
               if ($action == PATTERNS_MODIFY) {
@@ -221,9 +196,9 @@ function node_patterns_validate($action, $tag, &$data) {
                             ->execute()
                             ->fetchField();
             if ($num_nodeswithSameTitle > 1) {
-              $result[] = array(PATTERNS_WARNING_NOT_UNIQUE_ALIAS=> 
+              $result[] = array(PATTERNS_WARNING_NOT_UNIQUE_ALIAS=>
                 t('The node titled: "%title" is not unique in the system.', array('%title' =>$data['title'],)));
-            } 
+            }
             elseif ($num_nodeswithSameTitle  == 1) {
               $node_item = db_select('node', 'nd')
                  ->fields('nd', array('nid'))
@@ -233,9 +208,9 @@ function node_patterns_validate($action, $tag, &$data) {
               $data['node'] = node_load($node_item);
               $data['nid'] = $node_item;
               if ($data['node'] === FALSE) {
-                $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+                $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
                   t('The node: "%oldname" does not exist in the system.', array('%oldname' =>$data['nid'],)));
-              } 
+              }
               else {
                 if ($action == PATTERNS_MODIFY) {
                   $data['node'] = (object) $data['node'];
@@ -248,7 +223,7 @@ function node_patterns_validate($action, $tag, &$data) {
               }
             }
             else {
-              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+              $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
                 t('The node: "%oldname" does not exist in the system.', array('%oldname' =>$data['title'],)));
             }
           }
@@ -277,7 +252,7 @@ function node_patterns_validate($action, $tag, &$data) {
                     ->execute()
                     ->fetchField();
           if ($set) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
                 t('The content_type named "%name" already exists in the system', array('%name' => $data['name'],)));
           }
           $set = db_select('node_type', 'nt')
@@ -286,7 +261,7 @@ function node_patterns_validate($action, $tag, &$data) {
                     ->execute()
                     ->fetchField();
           if ($set) {
-            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+            $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
                 t('The type: %type already exists in the system', array('%type' => $data['type'],)));
           }
           break;
@@ -297,7 +272,7 @@ function node_patterns_validate($action, $tag, &$data) {
                     ->execute()
                     ->fetchField();
           if (!$set) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The content type: "%oldname" does not exist in the system.', array('%oldname' =>$data['name'],)));
           }
           if (isset($data['name'])) {
@@ -307,7 +282,7 @@ function node_patterns_validate($action, $tag, &$data) {
                       ->execute()
                       ->fetchField();
             if ($set) {
-              $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT => 
+              $result[] = array(PATTERNS_WARNING_ALREADY_DEFINED_ELEMENT =>
                   t('The content_type named "%name" already exists in the system', array('%name' => $data['name'],)));
             }
           }
@@ -319,7 +294,7 @@ function node_patterns_validate($action, $tag, &$data) {
                     ->execute()
                     ->fetchField();
           if (!$set) {
-            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED => 
+            $result[] = array(PATTERNS_WARNING_ELEMENT_UNDEFINED =>
               t('The content type: "%oldname" does not exist in the system.', array('%oldname' =>$data['name'],)));
           }
           break;
