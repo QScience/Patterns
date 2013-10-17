@@ -138,7 +138,7 @@ function patterns_schema() {
  * Add uuuid and author field to {patterns} table.
  */
 function patterns_update_7200() {
-  
+
   // Add the uuuid field to the db.
   if (!db_field_exists('patterns', 'uuuid')) {
     $uuuid = array(
@@ -170,13 +170,17 @@ function patterns_update_7200() {
  */
 function patterns_requirements($phase) {
   $requirements = array();
+  // Checking if patterns directory is writable
+  // Must be done at installation and runtime
 
- // Checking if patterns directory is writable
- // Must be done at installation and runtime
-  if (!_patterns_io_is_patterns_dir_ready(NULL, FILE_CREATE_DIRECTORY)) {
+  // patterns_path_get_files_dir() returns NULL;
+  $dir = variable_get('patterns_save_file', PATTERNS_FILES_DIR_DEFAULT);
+
+  if (!_patterns_io_is_patterns_dir_ready($dir, FILE_CREATE_DIRECTORY)) {
       $requirements['pdir'] = array(
         'title'       => t('Patterns files dir writable'),
-        'description' => t("Patterns folder doesn't exist or is not writable: !path", array('!path' => patterns_path_get_files_dir())),
+        'description' => t('Patterns folder does not exist or is not writable: !path',
+                           array('!path' => $dir)),
         'severity'    => REQUIREMENT_WARNING,
         'value'       => t('Not writable'),
       );
@@ -199,8 +203,8 @@ function patterns_requirements($phase) {
           'value'       => t('Disabled'),
         );
       }
-      
-      //Trying to detect CodeMirror library
+
+      //Trying to detect CodeMirror library.
       $library = libraries_detect('codemirror');
       if (empty($library['installed'])) {
         $requirements['codemirror'] = array(
