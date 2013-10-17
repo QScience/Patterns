@@ -2,9 +2,7 @@
 
 /**
  * @file
- *
  * API for writing pattern files.
- *
  */
 
 /**
