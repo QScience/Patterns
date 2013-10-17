@@ -167,11 +167,11 @@ function patterns_lab_submit($form, &$form_state) {
   $filename = $form_state['values']['export_name'];
   $zip_flag = ($form_state['values']['to'] === PATTERNS_EXPORT_TO_ZIP) ? TRUE : FALSE;
 
-  // Merged all the selected patterns
+  // Merged all the selected patterns.
   $export = patterns_api_add_info_section($form_state['values']['info']);
   $count = 0;
   $errors = array();
-  $ancestors = array();
+  $parents = array();
   foreach ($form_state['values']['patterns_table'] as $pid) {
     if (!is_int($pid)) {
       $pattern = patterns_get_pattern($pid);
@@ -189,13 +189,18 @@ function patterns_lab_submit($form, &$form_state) {
       $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
       $included = array('pattern' => $included);
       $export['lab'][] = array('include' => $included);
-      $ancestors[] = $pattern->uuuid;
+      $parents[] = $pattern->uuuid;
       $count++;
     }
-    //Add history header including all the merged patterns as ancestors. D2D ID will be null in case the module is not enabled
-    $export = patterns_history_add_header($export, 'merge', $base_url . '/xmlrpc.php',
-              variable_get('d2d_my_id', NULL), $ancestors);
   }
+
+  // Add parent header including all the merged patterns as parents.
+  // D2D ID will be null in case the module is not enabled.
+  $d2d_id = function_exists('d2d_api_own_d2d_id_get') 
+      ? d2d_api_own_d2d_id_get()
+      : NULL;
+  $url_rpc = $base_url . '/xmlrpc.php';
+  $export = patterns_history_set_parent($export, $url_rpc, $d2d_id, 'merge', $parents);
 
   // Prepare a zip file or a regular one
   if ($zip_flag) {
