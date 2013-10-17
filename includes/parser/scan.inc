@@ -432,7 +432,7 @@ function _patterns_scan_action($action, $result = array(), $level = PATTERNS_VAL
 		
     // only if the pattern is hard-coded, then scan it
     if (is_array($action['pattern'])) {
-      $result['include_scans'][] = patterns_scan_pattern($action['pattern'], TRUE);
+      $result['include_scans'][] = patterns_scan_pattern($action['pattern'], TRUE, $level);
     }
     return $result;
   }
