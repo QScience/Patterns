@@ -200,7 +200,7 @@ function patterns_lab_submit($form, &$form_state) {
       ? d2d_api_own_d2d_id_get()
       : NULL;
   $url_rpc = $base_url . '/xmlrpc.php';
-  $export = patterns_history_set_parent($export, $url_rpc, $d2d_id, 'merge', $parents);
+  patterns_history_set_parent($export, $url_rpc, $d2d_id, 'merge', $parents);
 
   // Prepare a zip file or a regular one
   if ($zip_flag) {

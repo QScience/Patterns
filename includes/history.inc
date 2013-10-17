@@ -22,7 +22,7 @@
  * 
  * @return Pattern including the new header
  */
-function patterns_history_set_parent($pattern, $host, $d2d_id, $action, $parents) {
+function patterns_history_set_parent(&$pattern, $host, $d2d_id, $action, $parents) {
   $pattern['info']['parent'] = array();
   $pattern['info']['parent']['host'] = $host;
   $pattern['info']['parent']['d2d_id'] = $d2d_id;
@@ -31,5 +31,4 @@ function patterns_history_set_parent($pattern, $host, $d2d_id, $action, $parents
   foreach ($parents as $uuuid) {
     $pattern['info']['parent']['uuuids'][] = $uuuid;
   }
-  return $pattern;
 }
