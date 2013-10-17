@@ -16,6 +16,7 @@ module_load_include('inc', 'patterns', 'includes/utils');
  */
 function patterns_install() {
   variable_set('patterns_engine_state', 'on');
+  variable_set('patterns_public_url', 'patterns'),
 }
 
 /**
