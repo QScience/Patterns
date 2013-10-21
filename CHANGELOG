@@ -1,3 +1,13 @@
+7300
+
+        - Patterns engine On / Off
+        - Validating oncluded patterns bug fix
+        - Codemirror error when a more recent pattern is found in file system fix
+        - Removed deprecated hook_arguments from components
+        - Removed unused code snippets
+        - patterns_utils_check_keys() for components developers
+        - Minor fixes and improvements
+
 7200
 
 		- Changes to allow compatibility with Libraries 7.x-2.x
