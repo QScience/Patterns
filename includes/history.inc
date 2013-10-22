@@ -4,31 +4,51 @@
  * @file
  * Manipulates pattern files to add information about the history of
  * merging and pulling.
- */ 
+ */
 
 /**
  * Adds a parent tag in the info section of the pattern.
- * 
- * @param array $pattern 
+ *
+ * Delete previous existing parent tag, and add a timestamp for each parent.
+ *
+ * Parent must be an array of the type:
+ *
+ * $parent = array(
+ *   'action' => 'merge',
+ *   'host' => $url_rpc,
+ *   'd2d_id' => $d2d_id,
+ *   'uuuid' => $pattern->uuuid,
+ *   'title' => $pattern->title,
+ *   'category' => @$pattern->pattern['category'],
+ *   'author' => $pattern->author,
+ * );
+ *
+ * Title, Category, Author, and D2D id fields are optional.
+ *
+ * @param array $pattern
  *   Pattern in which the new header will be appended
- * @param string $host
- *   URL of the instance that performed the action
- * @param string
- *   $d2d_id  D2D ID of the instance that performed the action
- * @param string $action
- *   Action that has produced this pattern, for now 'merge', 'pull', or 'push'
  * @param array $parents
- *   Array of UUUIDs of the parents
- * 
+ *   Array of arrays of parent objects
+ *
  * @return Pattern including the new header
  */
-function patterns_history_set_parent(&$pattern, $host, $d2d_id, $action, $parents) {
+function patterns_history_set_parent(&$pattern, $parents) {
   $pattern['info']['parent'] = array();
-  $pattern['info']['parent']['host'] = $host;
-  $pattern['info']['parent']['d2d_id'] = $d2d_id;
-  $pattern['info']['parent']['action'] = $action;
-  $pattern['info']['parent']['date'] = date_timestamp_get(date_create());
-  foreach ($parents as $uuuid) {
-    $pattern['info']['parent']['uuuids'][] = $uuuid;
+  foreach ($parents as $p) {
+    $p['category'] = isset($p['category']) && !empty($p['category']) ?
+      $p['category'] : 'default';
+    $p['author'] = isset($p['author']) && !empty($p['author']) ?
+      $p['author'] : 'unknown';
+    $p['d2d_id'] = isset($p['d2d_id']) && !empty($p['d2d_id']) ?
+      $p['d2d_id'] : 'unknown';
+    $p['title'] = isset($p['title']) && !empty($p['title']) ?
+      $p['title'] : 'no title';
+
+    if (!isset($p['host']) || !isset($p['action']) || !isset($p['uuuid'])) {
+      throw new Exception('Missing mandatory attributes in patterns_history_set_parent');
+    }
+
+    $p['date'] = date_timestamp_get(date_create());
+    $pattern['info']['parent'][] = $p;
   }
 }

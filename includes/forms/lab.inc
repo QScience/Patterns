@@ -172,6 +172,13 @@ function patterns_lab_submit($form, &$form_state) {
   $count = 0;
   $errors = array();
   $parents = array();
+
+  // D2D ID will be null in case the module is not enabled.
+  $d2d_id = function_exists('d2d_api_own_d2d_id_get')
+      ? d2d_api_own_d2d_id_get()
+      : 'unknown';
+  $url_rpc = $base_url . '/xmlrpc.php';
+
   foreach ($form_state['values']['patterns_table'] as $pid) {
     if (!is_int($pid)) {
       $pattern = patterns_get_pattern($pid);
@@ -189,18 +196,25 @@ function patterns_lab_submit($form, &$form_state) {
       $included = _patterns_lab_include_pattern($pattern, $form_state['values']['mode']);
       $included = array('pattern' => $included);
       $export['lab'][] = array('include' => $included);
-      $parents[] = $pattern->uuuid;
+
+      // Category is set to default, if missing.
+      $parents[] = array(
+        'action' => 'merge',
+        'host' => $url_rpc,
+        'd2d_id' => $d2d_id,
+        'uuuid' => $pattern->uuuid,
+        'title' => $pattern->title,
+        'category' => @$pattern->pattern['category'],
+        'author' => $pattern->author,
+      );
       $count++;
     }
   }
 
+
+
   // Add parent header including all the merged patterns as parents.
-  // D2D ID will be null in case the module is not enabled.
-  $d2d_id = function_exists('d2d_api_own_d2d_id_get') 
-      ? d2d_api_own_d2d_id_get()
-      : NULL;
-  $url_rpc = $base_url . '/xmlrpc.php';
-  patterns_history_set_parent($export, $url_rpc, $d2d_id, 'merge', $parents);
+  patterns_history_set_parent($export, $parents);
 
   // Prepare a zip file or a regular one
   if ($zip_flag) {
@@ -210,10 +224,12 @@ function patterns_lab_submit($form, &$form_state) {
 
     if (!$zip_path) {
       return FALSE;
-    } else{
+    }
+    else {
       return patterns_download_zip($zip_path);
     }
-  } else {
+  }
+  else {
     // Parse into a file and add info to the exported pattern
     $file = patterns_parser_dump($export, $format);
     $file = patterns_parser_dump_comment("Patterns exported: " . $count, $format, $file);
@@ -222,7 +238,8 @@ function patterns_lab_submit($form, &$form_state) {
     if ($form_state['values']['to'] === PATTERNS_EXPORT_TO_DB) {
       patterns_io_save_pattern($file, $filename, $format, $path);
       drupal_goto('admin/patterns/lab/');
-    }else{
+    }
+    else {
       drupal_add_http_header("Content-type", " text/plain; charset=utf-8");
       drupal_add_http_header("Content-Disposition", "attachment;filename=" . $filename . '.' . $format);
       print $file;
